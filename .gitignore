@@ -1,0 +1,42 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+.vite/
+coverage/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+!.env.staging.example
+!.env.production.example
+*.pem
+*.key
+secrets/
+
+# Generated assets
+storage/
+reports/generated/
+worker/cache/
+worker/model-cache/
+
+# Logs
+*.log
+logs/

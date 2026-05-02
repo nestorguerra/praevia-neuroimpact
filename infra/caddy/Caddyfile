@@ -1,0 +1,25 @@
+{
+  email {$CADDY_ACME_EMAIL:ops@praevia.ai}
+}
+
+{$APP_HOST} {
+  encode zstd gzip
+  reverse_proxy frontend:8080
+  header {
+    X-Content-Type-Options nosniff
+    X-Frame-Options DENY
+    Referrer-Policy strict-origin-when-cross-origin
+    Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  }
+}
+
+{$API_HOST} {
+  encode zstd gzip
+  reverse_proxy backend:8000
+  header {
+    X-Content-Type-Options nosniff
+    X-Frame-Options DENY
+    Referrer-Policy strict-origin-when-cross-origin
+    Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  }
+}

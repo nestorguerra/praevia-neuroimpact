@@ -1,0 +1,45 @@
+services:
+  frontend:
+    image: ghcr.io/${GHCR_IMAGE_NAMESPACE:-nestorguerra}/praevia-neuroimpact-frontend:${IMAGE_TAG:?IMAGE_TAG required}
+    restart: unless-stopped
+    environment:
+      APP_ENV: staging
+    expose:
+      - "8080"
+
+  backend:
+    image: ghcr.io/${GHCR_IMAGE_NAMESPACE:-nestorguerra}/praevia-neuroimpact-backend:${IMAGE_TAG:?IMAGE_TAG required}
+    restart: unless-stopped
+    env_file:
+      - ../.env.staging
+    environment:
+      APP_ENV: staging
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+    environment:
+      APP_HOST: ${APP_HOST:?APP_HOST required}
+      API_HOST: ${API_HOST:?API_HOST required}
+      CADDY_ACME_EMAIL: ${CADDY_ACME_EMAIL:-ops@praevia.ai}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data-staging:/data
+      - caddy-config-staging:/config
+
+volumes:
+  caddy-data-staging:
+  caddy-config-staging:

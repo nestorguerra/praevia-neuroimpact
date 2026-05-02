@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>NeuroImpact Analyzer · Prototipo</title>
+<link rel="stylesheet" href="tokens.css"/>
+<link rel="stylesheet" href="prototype-styles.css"/>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const Mark = ({size=22, pupilFill='#E8A33D'}) => (
+  <svg viewBox="0 0 32 32" width={size} height={size} style={{color:'#E8EDF3'}}>
+    <circle cx="16" cy="16" r="12.5" fill="none" stroke="currentColor" strokeWidth="1.2" opacity="0.35"/>
+    <circle cx="16" cy="16" r="7.5" fill="none" stroke="currentColor" strokeWidth="1.4"/>
+    <circle cx="13" cy="16" r="2.4" fill={pupilFill}/>
+    <line x1="6" y1="4.5" x2="14" y2="4.5" stroke="currentColor" strokeWidth="1.4"/>
+  </svg>
+);
+
+const Wordmark = ({size=17}) => (
+  <span style={{fontFamily:"'Newsreader',serif", fontSize:size, fontWeight:500, letterSpacing:'-0.018em'}}>
+    prae<em style={{fontStyle:'italic',fontWeight:400}}>vi</em><b style={{fontFamily:"'Geist',sans-serif",fontWeight:600,fontSize:'0.92em'}}>A</b>
+  </span>
+);
+
+const Icon = ({d, size=16}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{d}</svg>
+);
+
+// ─── LOGIN ─────────────────────────────────────────
+const Login = ({ onSignIn }) => (
+  <div className="login">
+    <div className="left">
+      <div style={{display:'flex',alignItems:'center',gap:10}}>
+        <Mark size={28}/><Wordmark size={22}/>
+      </div>
+      <div>
+        <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:'0.18em',color:'#E8A33D',textTransform:'uppercase',marginBottom:24}}>
+          ── NeuroImpact Analyzer · v1.0
+        </div>
+        <h1>Decide qué <em>versión</em> usar.<br/>Antes de producir.</h1>
+        <p style={{fontFamily:"'Newsreader',serif",fontSize:18,lineHeight:1.55,color:'var(--text-2)',maxWidth:'46ch',marginTop:24}}>
+          Pretest neurocognitivo <em>in silico</em> para vídeo, audio y texto. Comparativas A/B/C con recomendaciones por timecode.
+        </p>
+      </div>
+      <div className="meta">
+        <span>Hosting UE · DPA</span>
+        <span>v1.0 · 2026</span>
+      </div>
+    </div>
+    <div className="right">
+      <div className="form">
+        <h2>Entrar al workspace</h2>
+        <div className="field">
+          <label>Email corporativo</label>
+          <input defaultValue="nestor@atlas.es" placeholder="nombre@empresa.com"/>
+        </div>
+        <div className="field">
+          <label>Contraseña</label>
+          <input type="password" defaultValue="••••••••••••"/>
+        </div>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8,fontSize:12,color:'var(--text-3)'}}>
+          <span style={{fontFamily:"'JetBrains Mono',monospace",letterSpacing:'0.12em',textTransform:'uppercase'}}>· MFA habilitado</span>
+          <a style={{color:'var(--signal-amber)',fontFamily:"'Geist',sans-serif"}}>¿Olvidaste contraseña?</a>
+        </div>
+        <div className="actions">
+          <button className="b b-primary" onClick={onSignIn}>Entrar →</button>
+          <button className="b b-secondary">SSO · SAML corporativo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ─── SHELL (topbar + rail) ──────────────────────────
+const Shell = ({ screen, setScreen, project, children }) => {
+  const navItems = [
+    {id:'dashboard', label:'Workspace', section:'PRINCIPAL'},
+    {id:'upload', label:'Nuevo análisis', section:'PRINCIPAL'},
+    {id:'compare', label:'Comparativas', section:'PRINCIPAL'},
+    {id:'benchmarks', label:'Benchmarks', section:'INSIGHTS'},
+    {id:'reports', label:'Informes', section:'INSIGHTS'},
+    {id:'settings', label:'Workspace', section:'CUENTA'},
+    {id:'team', label:'Equipo', section:'CUENTA'},
+  ];
+  let lastSection = '';
+  return (
+    <div className="app">
+      <div className="topbar">
+        <div className="brand"><Mark size={20}/><Wordmark size={17}/></div>
+        <div className="brand-dot">NeuroImpact Analyzer</div>
+        <div className="crumbs" style={{marginLeft:14}}>
+          <span>Banco Atlas</span><span className="sep">/</span>
+          <span>Campaña Q2 — Hipotecas</span><span className="sep">/</span>
+          <strong>{project || 'Workspace'}</strong>
+        </div>
+        <div className="right">
+          <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:'0.14em',color:'var(--text-3)',textTransform:'uppercase'}}>240 / 500 créditos</span>
+          <button className="b b-secondary">Invitar</button>
+          <div style={{width:30,height:30,borderRadius:'50%',background:'var(--ink-300)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'JetBrains Mono',monospace",fontSize:11}}>NG</div>
+        </div>
+      </div>
+      <div className="layout">
+        <div className="rail">
+          {navItems.map(it => {
+            const showSect = it.section !== lastSection;
+            lastSection = it.section;
+            return (
+              <React.Fragment key={it.id}>
+                {showSect && <div className="sect">{it.section}</div>}
+                <div className={`item ${screen===it.id?'active':''}`} onClick={()=>setScreen(it.id)}>
+                  <span className="ic">●</span>
+                  <span>{it.label}</span>
+                </div>
+              </React.Fragment>
+            );
+          })}
+          <div style={{flex:1}}/>
+          <div style={{padding:14,borderTop:'1px solid var(--border)',marginTop:14,fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:'0.14em',color:'var(--text-3)',textTransform:'uppercase',lineHeight:1.6}}>
+            <div style={{color:'var(--signal-amber)'}}>● PILOT · SPRINT 10</div>
+            <div>3 / 10 piezas analizadas</div>
+          </div>
+        </div>
+        <div className="main">{children}</div>
+      </div>
+    </div>
+  );
+};
+
+// ─── WORKSPACE / DASHBOARD ───────────────────────────
+const Workspace = ({ setScreen }) => (
+  <>
+    <div className="page-head">
+      <div>
+        <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:'0.16em',color:'var(--signal-amber)',textTransform:'uppercase',marginBottom:6}}>WORKSPACE · BANCO ATLAS</div>
+        <h1>Hipotecas Q2 — comparativa de spots</h1>
+        <div className="meta">3 piezas activas · 2 análisis pendientes · piloto en curso</div>
+      </div>
+      <div className="actions">
+        <button className="b b-secondary">Importar</button>
+        <button className="b b-primary" onClick={()=>setScreen('upload')}>+ Nuevo análisis</button>
+      </div>
+    </div>
+
+    <div className="page-body">
+      <div className="kpi-row">
+        <div className="kpi"><div className="k">Piezas analizadas</div><div className="v">14</div><div className="d">▲ 4 esta semana</div></div>
+        <div className="kpi"><div className="k">NRI medio · campaña</div><div className="v amber">0.71</div><div className="d">▲ +0.08 vs benchmark</div></div>
+        <div className="kpi"><div className="k">Recomendaciones aplicadas</div><div className="v">23 / 31</div><div className="d">74% adopción</div></div>
+        <div className="kpi"><div className="k">Tiempo medio de análisis</div><div className="v">11:42</div><div className="d" style={{color:'var(--text-3)'}}>por minuto de pieza</div></div>
+      </div>
+
+      <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:'0.16em',color:'var(--text-3)',textTransform:'uppercase',margin:'24px 0 12px'}}>PROYECTOS ACTIVOS</div>
+      <div className="proj-grid">
+        <div className="proj-card" onClick={()=>setScreen('compare')}>
+          <div className="row">
+            <div>
+              <div className="name">Spot 30s · Hipoteca Verde</div>
+              <div className="meta">CTV · 3 versiones · 01.05</div>
+            </div>
+            <span className="badge b-active">EN ANÁLISIS</span>
+          </div>
+          <div className="stats">
+            <span><strong>NRI 0.78</strong> · v_A</span>
+            <span><strong>NRI 0.66</strong> · v_B</span>
+            <span><strong>NRI 0.61</strong> · v_C</span>
+          </div>
+        </div>
+
+        <div className="proj-card">
+          <div className="row">
+            <div>
+              <div className="name">Vídeo apertura · Junta accionistas</div>
+              <div className="meta">EVENTO · 2:30 · 28.04</div>
+            </div>
+            <span className="badge b-done">COMPLETO</span>
+          </div>
+          <div className="stats">
+            <span><strong>NRI 0.82</strong></span>
+            <span><strong>5 picos</strong></span>
+            <span><strong>2 valles</strong></span>
+          </div>
+        </div>
+
+        <div className="proj-card">
+          <div className="row">
+            <div>
+              <div className="name">Pretest guion · Cuenta Joven</div>
+              <div className="meta">SOLO TEXTO · 2 versiones · 25.04</div>
+            </div>
+            <span className="badge b-done">COMPLETO</span>
+          </div>
+          <div className="stats">
+            <span><strong>Clarity 0.84</strong></span>
+            <span><strong>Load 0.42</strong></span>
+            <span><strong>Mix v1+v2</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+);
+
+// ─── UPLOAD ─────────────────────────────────────────
+const Upload = ({ onAnalyze }) => {
+  const [drag, setDrag] = useState(false);
+  const [files, setFiles] = useState([
+    {name:'spot_30s_v3_A.mp4', meta:'MP4 · 30 SEG · 1920×1080 · 24 FPS', size:'48.2 MB', pct: 100, status:'OK'},
+    {name:'spot_30s_v3_B.mp4', meta:'MP4 · 30 SEG · 1920×1080 · 24 FPS', size:'46.8 MB', pct: 100, status:'OK'},
+    {name:'spot_30s_v3_C.mp4', meta:'MP4 · 15 SEG · 1080×1080 · 24 FPS', size:'22.1 MB', pct: 64, status:'…'},
+  ]);
+  return (
+    <>
+      <div className="page-head">
+        <div>
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:'0.16em',color:'var(--signal-amber)',textTransform:'uppercase',marginBottom:6}}>NUEVO ANÁLISIS · COMPARATIVA A/B/C</div>
+          <h1>Sube las piezas a comparar</h1>
+          <div className="meta">Vídeo, audio o texto · hasta 3 versiones por análisis</div>
+        </div>
+      </div>
+      <div className="page-body">
+        <div className="kpi-row" style={{gridTemplateColumns:'1fr 1fr 1fr',marginBottom:20}}>
+          <div className="kpi" style={{padding:'14px 18px'}}>
+            <div className="k">Marca</div>
+            <div style={{fontFamily:"'Newsreader',serif",fontSize:18,fontWeight:500,marginTop:4}}>Banco Atlas</div>
+          </div>
+          <div className="kpi" style={{padding:'14px 18px'}}>
+            <div className="k">Canal</div>
+            <div style={{fontFamily:"'Newsreader',serif",fontSize:18,fontWeight:500,marginTop:4}}>CTV · 30s</div>
+          </div>
+          <div className="kpi" style={{padding:'14px 18px'}}>
+            <div className="k">Objetivo</div>
+            <div style={{fontFamily:"'Newsreader',serif",fontSize:18,fontWeight:500,marginTop:4}}>Brand awareness</div>
+          </div>
+        </div>
+
+        <div className={`uploader ${drag?'drag':''}`}
+          onDragEnter={(e)=>{e.preventDefault();setDrag(true);}}
+          onDragLeave={()=>setDrag(false)}
+          onDragOver={(e)=>e.preventDefault()}
+          onDrop={(e)=>{e.preventDefault();setDrag(false);}}>
+          <div style={{color:'var(--signal-amber)',marginBottom:18}}>
+            <svg width="36" height="36" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M16 22 L16 6 M10 12 L16 6 L22 12"/><rect x="5" y="22" width="22" height="5" rx="1"/></svg>
+          </div>
+          <h3>Arrastra los archivos aquí</h3>
+          <p>MP4, MOV, WAV, MP3 o TXT. Máximo 500 MB por archivo. Las versiones a comparar deben tener objetivo, canal y duración compatibles.</p>
+          <button className="b b-secondary">o explorar archivos</button>
+        </div>
+
+        <div className="upload-list">
+          {files.map((f,i) => (
+            <div key={i} className="upload-row">
+              <span className="ic">▤</span>
+              <div>
+                <div className="name">{f.name}</div>
+                <div className="meta">{f.meta}</div>
+              </div>
+              <div className="progress"><div style={{width:`${f.pct}%`}}/></div>
+              <div className="pct">{f.pct}%</div>
+              <span className={`badge-mini ${f.pct===100?'badge badge-amber':'badge badge-mute'}`} style={{padding:'3px 6px',background:f.pct===100?'rgba(184,224,74,0.12)':'var(--ink-200)',color:f.pct===100?'var(--signal-lime)':'var(--text-2)',border:`1px solid ${f.pct===100?'rgba(184,224,74,0.3)':'var(--border)'}`}}>{f.pct===100?'VALIDADO':'SUBIENDO'}</span>
+              <span style={{color:'var(--text-3)',cursor:'pointer'}}>×</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:24,padding:'18px 20px',background:'var(--ink-100)',border:'1px solid var(--border)',borderRadius:6}}>
+          <div>
+            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:'0.14em',color:'var(--text-3)',textTransform:'uppercase'}}>CRÉDITOS A CONSUMIR</div>
+            <div style={{fontFamily:"'Newsreader',serif",fontSize:22,fontWeight:500,marginTop:4}}>3 piezas · 75 segundos · <span style={{color:'var(--signal-amber)'}}>5 créditos</span></div>
+          </div>
+          <button className="b b-primary" style={{padding:'12px 22px',fontSize:14}} onClick={onAnalyze}>Iniciar análisis →</button>
+        </div>
+      </div>
+    </>
+  );
+};
+
+// ─── ANALYSIS / LOADING ─────────────────────────────
+const Analysis = ({ onDone }) => {
+  const [step, setStep] = useState(0);
+  const steps = [
+    'Validación de archivos y metadatos',
+    'Extracción de fotogramas y transcripción',
+    'Inferencia visual · saliencia y escena',
+    'Inferencia auditiva · ritmo y prosodia',
+    'Inferencia narrativa · claridad y carga',
+    'Coherencia multimodal y benchmarking',
+    'Generación de recomendaciones',
+  ];
+  useEffect(() => {
+    if (step >= steps.length) { setTimeout(onDone, 500); return; }
+    const t = setTimeout(() => setStep(s => s + 1), step === 0 ? 800 : 1100);
+    return () => clearTimeout(t);
+  }, [step]);
+
+  return (
+    <div className="analysis">
+      <div className="analysis-inner">
+        <div className="label">● PROCESANDO · 3 PIEZAS · 75 SEG</div>
+        <h1>El instrumento <em>está observando</em>.</h1>
+        <p style={{fontFamily:"'Newsreader',serif",fontSize:17,color:'var(--text-2)',lineHeight:1.55,maxWidth:'52ch',marginBottom:32}}>
+          Esta es la única espera del producto. Cuando termine, tendrás un timeline accionable, recomendaciones por timecode y un PDF listo para circular.
+        </p>
+        <div className="steps">
+          {steps.map((s, i) => (
+            <div key={i} className={`step ${i<step?'done':''} ${i===step?'active':''}`}>
+              <span className="num">{String(i+1).padStart(2,'0')}</span>
+              <span className="name">{s}</span>
+              <span className="status">{i<step?'OK':i===step?'EN CURSO':'PENDIENTE'}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── COMPARE / DASHBOARD ────────────────────────────
+const Compare = () => {
+  const [tab, setTab] = useState('timeline');
+  const [playhead, setPlayhead] = useState(180);
+  const versions = [
+    {key:'A', name:'Versión A', tag:'master', recommended:true, scores:{NRI:0.78, Visual:0.71, Narr:0.84, Action:0.42}, color:'#E8A33D'},
+    {key:'B', name:'Versión B', tag:'social', recommended:false, scores:{NRI:0.66, Visual:0.63, Narr:0.63, Action:0.58}, color:'#6FD4E8'},
+    {key:'C', name:'Versión C', tag:'short', recommended:false, scores:{NRI:0.61, Visual:0.74, Narr:0.51, Action:0.68}, color:'#9B7FE8'},
+  ];
+
+  return (
+    <>
+      <div className="page-head">
+        <div>
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:'0.16em',color:'var(--signal-amber)',textTransform:'uppercase',marginBottom:6}}>● ANÁLISIS COMPLETO · CONF MEDIA 0.91</div>
+          <h1>Spot 30s · Hipoteca Verde</h1>
+          <div className="meta">3 versiones · 75 seg analizados · benchmark Banca/Hipotecas n=312</div>
+        </div>
+        <div className="actions">
+          <button className="b b-secondary">Comentar timecode</button>
+          <button className="b b-secondary">Compartir</button>
+          <button className="b b-primary">Exportar PDF →</button>
+        </div>
+      </div>
+
+      <div className="main-tabs">
+        {[
+          {id:'resumen',label:'Resumen'},
+          {id:'timeline',label:'Timeline'},
+          {id:'modalidades',label:'Modalidades'},
+          {id:'comparativa',label:'Comparativa'},
+          {id:'recs',label:'Recomendaciones'},
+          {id:'informe',label:'Informe'},
+        ].map(t => (
+          <div key={t.id} className={`tab ${tab===t.id?'active':''}`} onClick={()=>setTab(t.id)}>{t.label}</div>
+        ))}
+      </div>
+
+      <div className="page-body">
+        {/* video cards */}
+        <div className="compare-grid">
+          {versions.map(v => (
+            <div key={v.key} className={`video-card ${v.key} ${v.recommended?'recommended':''}`}>
+              <div className="head">
+                <span className="nm">VERSION_<em>{v.key}</em> · {v.tag}</span>
+                {v.recommended && <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:'0.14em',color:'var(--signal-amber)',textTransform:'uppercase'}}>★ Recomendado</span>}
+              </div>
+              <div className="frame">
+                <div className="placeholder-stripes">PLACEHOLDER · VIDEO {v.key}</div>
+                <div className="play"><svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><polygon points="2,1 10,5.5 2,10"/></svg></div>
+                <div className="tc">00:14 / 00:30</div>
+              </div>
+              <div className="scores">
+                {Object.entries(v.scores).map(([k,val],i) => (
+                  <div key={k} className="sc">
+                    <div className="lbl">{k}</div>
+                    <div className={`val ${val>0.75?'peak':''}`} style={val>0.75?{color:v.color}:{}}>{val.toFixed(2)}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="verdict">
+                {v.recommended ? <><span>★ MIX RECOMENDADO · BASE</span><span>→</span></> : <><span>Aporta a recortes / cierre</span><span>→</span></>}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* timeline */}
+        <div className="timeline-panel">
+          <div className="head">
+            <h3>Timeline accionable · respuesta cerebral predicha</h3>
+            <div className="legend">
+              <span><span className="sw" style={{background:'#E8A33D'}}/>Versión A</span>
+              <span><span className="sw" style={{background:'#6FD4E8'}}/>Versión B</span>
+              <span><span className="sw" style={{background:'#9B7FE8'}}/>Versión C</span>
+              <span style={{color:'var(--text-3)'}}>· conf. 0.91</span>
+            </div>
+          </div>
+          <div className="body">
+            <svg viewBox="0 0 1100 200" preserveAspectRatio="none" onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = ((e.clientX - rect.left) / rect.width) * 1100;
+              setPlayhead(x);
+            }} style={{cursor:'crosshair'}}>
+              <defs>
+                <linearGradient id="fill-a" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stopColor="#E8A33D" stopOpacity="0.25"/>
+                  <stop offset="1" stopColor="#E8A33D" stopOpacity="0"/>
+                </linearGradient>
+              </defs>
+              {/* grid */}
+              <g stroke="rgba(255,255,255,0.04)" strokeWidth="1">
+                {[40,80,120,160].map(y=>(<line key={y} x1="0" y1={y} x2="1100" y2={y}/>))}
+                {[110,220,330,440,550,660,770,880,990].map(x=>(<line key={x} x1={x} y1="0" x2={x} y2="200"/>))}
+              </g>
+              {/* baseline */}
+              <line x1="0" y1="100" x2="1100" y2="100" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="2 4"/>
+              {/* A */}
+              <path d="M 0 110 Q 60 70, 110 90 T 220 80 T 330 60 T 440 30 T 550 80 T 660 60 T 770 110 T 880 130 T 990 70 T 1100 60" stroke="#E8A33D" strokeWidth="2.2" fill="none"/>
+              <path d="M 0 110 Q 60 70, 110 90 T 220 80 T 330 60 T 440 30 T 550 80 T 660 60 T 770 110 T 880 130 T 990 70 T 1100 60 L 1100 200 L 0 200 Z" fill="url(#fill-a)"/>
+              {/* B */}
+              <path d="M 0 130 Q 60 140, 110 120 T 220 130 T 330 110 T 440 140 T 550 115 T 660 135 T 770 125 T 880 110 T 990 130 T 1100 120" stroke="#6FD4E8" strokeWidth="1.8" fill="none" opacity="0.85"/>
+              {/* C */}
+              <path d="M 0 145 Q 60 155, 110 140 T 220 150 T 330 145 T 440 155 T 550 130 T 660 145 T 770 130 T 880 100 T 990 115 T 1100 100" stroke="#9B7FE8" strokeWidth="1.6" fill="none" opacity="0.7" strokeDasharray="3 3"/>
+              {/* peak */}
+              <line x1="440" y1="0" x2="440" y2="200" stroke="#B8E04A" strokeWidth="1" strokeDasharray="3 3" opacity="0.6"/>
+              <circle cx="440" cy="30" r="5" fill="#B8E04A"/>
+              <text x="448" y="22" fontFamily="JetBrains Mono" fontSize="10" fill="#B8E04A">PEAK · 00:14 · social cue</text>
+              {/* valley */}
+              <line x1="880" y1="0" x2="880" y2="200" stroke="#E8674A" strokeWidth="1" strokeDasharray="3 3" opacity="0.6"/>
+              <circle cx="880" cy="130" r="5" fill="#E8674A"/>
+              <text x="872" y="156" fontFamily="JetBrains Mono" fontSize="10" fill="#E8674A" textAnchor="end">VALLEY · 00:22 · semantic load</text>
+              {/* playhead */}
+              <line x1={playhead} y1="0" x2={playhead} y2="200" stroke="#E8EDF3" strokeWidth="1" opacity="0.7"/>
+              <polygon points={`${playhead-4},0 ${playhead+4},0 ${playhead},6`} fill="#E8EDF3"/>
+              <rect x={playhead+4} y="6" width="80" height="20" rx="2" fill="#0A0E13" stroke="#E8EDF3" strokeOpacity="0.5"/>
+              <text x={playhead+10} y="20" fontFamily="JetBrains Mono" fontSize="10" fill="#E8EDF3">{`00:${String(Math.floor((playhead/1100)*30)).padStart(2,'0')}.${String(Math.floor((playhead/1100)*30*100)%100).padStart(2,'0')}`}</text>
+            </svg>
+            <div className="ruler">
+              {[0,3,6,9,12,15,18,21,24,27,30].map(s=>(<span key={s}>00:{String(s).padStart(2,'0')}</span>))}
+            </div>
+          </div>
+        </div>
+
+        {/* recommendations */}
+        <div className="recs">
+          <div className="head">
+            <h3>Recomendaciones priorizadas</h3>
+            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:'0.14em',color:'var(--text-3)',textTransform:'uppercase'}}>5 acciones · ordenadas por impacto</span>
+          </div>
+          {[
+            {tc:'00:08', layer:'visual', txt:'Adelantar el plano del rostro humano. Mejora Social Cueing en +0.14 estimado.', conf:0.94, layerKey:'visual'},
+            {tc:'00:14', layer:'audio', txt:'Aprovechar el peak con un acento sonoro o silencio sostenido. Refuerza la decisión de cierre.', conf:0.91, layerKey:'audio'},
+            {tc:'00:18-00:22', layer:'texto', txt:'Reducir 6 palabras de la locución. Densidad verbal por encima del benchmark de banca.', conf:0.88, layerKey:'text'},
+            {tc:'00:22', layer:'visual', txt:'Cortar 2s del valle o sustituir por b-roll. La continuidad visual cae aquí.', conf:0.82, layerKey:'visual'},
+            {tc:'00:26-00:30', layer:'texto', txt:'Reformular CTA: pasar de pasiva a imperativa. Action Readiness sube +0.18 esperado.', conf:0.76, layerKey:'text'},
+          ].map((r,i) => (
+            <div key={i} className="rec">
+              <div className="tc">{r.tc}</div>
+              <div className={`layer ${r.layerKey}`}>{r.layer}</div>
+              <div className="what">{r.txt}</div>
+              <div className="conf">CONF <b>{r.conf.toFixed(2)}</b></div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{marginTop:24,padding:'24px 28px',background:'rgba(232,163,61,0.06)',border:'1px solid rgba(232,163,61,0.3)',borderRadius:6,display:'flex',justifyContent:'space-between',alignItems:'center',gap:24}}>
+          <div>
+            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:'0.16em',color:'var(--signal-amber)',textTransform:'uppercase',marginBottom:6}}>★ DECISIÓN RECOMENDADA</div>
+            <div style={{fontFamily:"'Newsreader',serif",fontSize:24,fontWeight:500,letterSpacing:'-0.012em',lineHeight:1.2,maxWidth:'60ch'}}>
+              Usar <em style={{color:'var(--signal-amber)'}}>Versión A</em> como master. Aplicar las 5 recomendaciones. Tomar de Versión B el cierre (00:24-00:30).
+            </div>
+          </div>
+          <button className="b b-primary" style={{padding:'12px 22px'}}>Aprobar y exportar →</button>
+        </div>
+      </div>
+    </>
+  );
+};
+
+// ─── APP ───────────────────────────────────────────
+const App = () => {
+  const [stage, setStage] = useState('login'); // login | shell
+  const [screen, setScreen] = useState('dashboard');
+
+  if (stage === 'login') return <Login onSignIn={()=>setStage('shell')}/>;
+
+  let body;
+  if (screen === 'dashboard') body = <Workspace setScreen={setScreen}/>;
+  else if (screen === 'upload') body = <Upload onAnalyze={()=>setScreen('analysis')}/>;
+  else if (screen === 'analysis') body = <Analysis onDone={()=>setScreen('compare')}/>;
+  else if (screen === 'compare') body = <Compare/>;
+  else body = <div className="page-body" style={{padding:64}}><div style={{fontFamily:"'Newsreader',serif",fontSize:24,color:'var(--text-2)'}}>Pantalla en construcción — el prototipo se concentra en el flujo principal: <em>Workspace → Upload → Análisis → Comparativa</em>.</div></div>;
+
+  return (
+    <Shell screen={screen} setScreen={setScreen} project={screen==='compare'?'Spot 30s · Hipoteca Verde':null}>
+      {body}
+    </Shell>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

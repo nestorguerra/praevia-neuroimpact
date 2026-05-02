@@ -1,0 +1,74 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to rollback.
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      release_id:
+        description: Existing release/image tag to restore.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  rollback-staging:
+    if: inputs.environment == 'staging'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare deployment key
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.STAGING_DEPLOY_SSH_KEY }}" > ~/.ssh/praevia_deploy_key
+          chmod 600 ~/.ssh/praevia_deploy_key
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/praevia_deploy_key
+          ssh-keyscan -p "${{ secrets.STAGING_DEPLOY_PORT || 22 }}" "${{ secrets.STAGING_DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+      - name: Rollback staging
+        env:
+          DEPLOY_ENV: staging
+          DEPLOY_HOST: ${{ secrets.STAGING_DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.STAGING_DEPLOY_USER || 'deploy' }}
+          DEPLOY_PORT: ${{ secrets.STAGING_DEPLOY_PORT || '22' }}
+          DEPLOY_ROOT: ${{ secrets.STAGING_DEPLOY_ROOT || '/opt/praevia-neuroimpact/staging' }}
+          ROLLBACK_TO: ${{ inputs.release_id }}
+        run: scripts/rollback-remote-compose.sh
+
+  rollback-production:
+    if: inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare deployment key
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.PRODUCTION_DEPLOY_SSH_KEY }}" > ~/.ssh/praevia_deploy_key
+          chmod 600 ~/.ssh/praevia_deploy_key
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/praevia_deploy_key
+          ssh-keyscan -p "${{ secrets.PRODUCTION_DEPLOY_PORT || 22 }}" "${{ secrets.PRODUCTION_DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+      - name: Rollback production
+        env:
+          DEPLOY_ENV: production
+          DEPLOY_HOST: ${{ secrets.PRODUCTION_DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.PRODUCTION_DEPLOY_USER || 'deploy' }}
+          DEPLOY_PORT: ${{ secrets.PRODUCTION_DEPLOY_PORT || '22' }}
+          DEPLOY_ROOT: ${{ secrets.PRODUCTION_DEPLOY_ROOT || '/opt/praevia-neuroimpact/production' }}
+          ROLLBACK_TO: ${{ inputs.release_id }}
+        run: scripts/rollback-remote-compose.sh

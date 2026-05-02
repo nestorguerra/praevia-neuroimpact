@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PraevIA — Brief de diseño</title>
+<link rel="stylesheet" href="tokens.css"/>
+<style>
+  body { background: var(--paper-50); color: var(--paper-900); }
+  .doc { max-width: 900px; margin: 0 auto; padding: 80px 56px 120px; }
+
+  .crumb { display: flex; gap: 12px; align-items: center; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--paper-500); }
+  .crumb a { border-bottom: 1px solid var(--paper-300); padding-bottom: 1px; }
+  .crumb a:hover { color: var(--paper-900); border-color: var(--paper-900); }
+
+  .cover { padding: 48px 0 64px; border-bottom: 1px solid var(--paper-200); }
+  .cover .label { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--signal-coral); margin-bottom: 24px; }
+  .cover h1 { font-family: var(--f-display); font-size: clamp(44px, 6vw, 72px); font-weight: 400; line-height: 1.02; letter-spacing: -0.025em; color: var(--paper-900); }
+  .cover h1 em { font-style: italic; color: var(--paper-500); }
+  .cover .meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--paper-200); }
+  .cover .meta .k { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--paper-500); margin-bottom: 6px; }
+  .cover .meta .v { font-family: var(--f-display); font-size: 17px; font-weight: 500; color: var(--paper-900); }
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--paper-200); }
+  section.no-border { border-bottom: none; }
+
+  h2 { font-family: var(--f-display); font-size: 36px; font-weight: 400; line-height: 1.05; letter-spacing: -0.018em; color: var(--paper-900); margin-bottom: 24px; max-width: 18ch; }
+  h2 em { font-style: italic; color: var(--signal-coral); }
+  h3 { font-family: var(--f-display); font-size: 22px; font-weight: 500; letter-spacing: -0.01em; margin: 32px 0 12px; }
+
+  .num { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper-500); margin-bottom: 12px; }
+
+  p { font-family: var(--f-display); font-size: 18px; line-height: 1.6; color: var(--paper-900); margin-bottom: 16px; max-width: 64ch; }
+  p.lede { font-size: 22px; line-height: 1.45; color: var(--paper-500); }
+  p em { font-style: italic; }
+
+  ul.bullets { list-style: none; padding: 0; margin: 16px 0; }
+  ul.bullets li { font-family: var(--f-display); font-size: 17px; line-height: 1.5; padding-left: 28px; position: relative; margin-bottom: 10px; max-width: 64ch; }
+  ul.bullets li::before { content: '— '; position: absolute; left: 0; color: var(--signal-coral); font-weight: 500; }
+
+  .pull { border-left: 3px solid var(--signal-coral); padding: 4px 0 4px 20px; margin: 32px 0; font-family: var(--f-display); font-size: 22px; font-style: italic; line-height: 1.4; color: var(--paper-900); max-width: 50ch; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 24px; }
+
+  .principle { padding: 24px; background: var(--paper-100); border-radius: 4px; }
+  .principle .n { font-family: var(--f-mono); font-size: 11px; color: var(--signal-coral); letter-spacing: 0.16em; }
+  .principle h4 { font-family: var(--f-display); font-size: 22px; font-weight: 500; margin: 8px 0 8px; line-height: 1.1; }
+  .principle p { font-size: 14.5px; color: var(--paper-500); line-height: 1.5; margin: 0; max-width: none; }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  table th, table td { text-align: left; padding: 14px 12px; border-bottom: 1px solid var(--paper-200); vertical-align: top; }
+  table th { font-family: var(--f-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--paper-500); font-weight: 500; padding-bottom: 8px; }
+  table td { font-family: var(--f-display); font-size: 15px; line-height: 1.5; }
+  table td.use { color: var(--paper-900); }
+  table td.avoid { color: var(--paper-400); text-decoration: line-through; text-decoration-color: rgba(232,103,74,0.6); }
+
+  .swatch-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 16px 0; }
+  .sw { aspect-ratio: 1; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; justify-content: flex-end; font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.06em; }
+
+  .type-spec { padding: 24px 0; border-top: 1px solid var(--paper-200); display: grid; grid-template-columns: 140px 1fr; gap: 32px; align-items: baseline; }
+  .type-spec .info { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--paper-500); }
+  .type-spec .info b { display: block; color: var(--paper-900); font-family: var(--f-display); font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; margin-bottom: 4px; }
+  .type-spec .sample { color: var(--paper-900); }
+
+  .toc { padding: 32px; background: var(--paper-100); border-radius: 4px; margin: 32px 0; }
+  .toc ol { margin: 0; padding-left: 24px; }
+  .toc li { font-family: var(--f-display); font-size: 17px; line-height: 1.7; }
+  .toc a { border-bottom: 1px solid transparent; }
+  .toc a:hover { border-color: var(--paper-900); }
+
+  .sign { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--paper-200); display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--paper-500); }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <div class="crumb">
+    <a href="index.html">PraevIA · Design Hub</a>
+    <span>/</span>
+    <span>01 · Brief de diseño</span>
+  </div>
+
+  <div class="cover">
+    <div class="label">Documento de diseño · v1.0 · 01.05.2026</div>
+    <h1>Un instrumento de pretest creativo. <em>No una bola de cristal.</em></h1>
+
+    <div class="meta">
+      <div><div class="k">Cliente</div><div class="v">Néstor Guerra</div></div>
+      <div><div class="k">Producto</div><div class="v">NeuroImpact Analyzer</div></div>
+      <div><div class="k">Marca</div><div class="v">PraevIA</div></div>
+      <div><div class="k">Mercado</div><div class="v">B2B · España</div></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="num">01 · Resumen del proyecto</div>
+    <h2>Qué estamos diseñando</h2>
+    <p class="lede">PraevIA es la marca paraguas. NeuroImpact Analyzer es el primer producto: una plataforma B2B de pretest neurocognitivo <em>in silico</em> que analiza vídeo, audio y texto y devuelve recomendaciones editoriales por timecode antes de que la pieza salga a producción o medios.</p>
+    <p>El producto no compite contra estudios reales con usuarios. Compite contra la <em>decisión creativa a ciegas</em>, contra los comités interminables y contra lanzar campañas sin haber comparado versiones. Es la capa que llega <em>antes</em>: rápida, computacional, orientada a decisión.</p>
+    <p>El paquete de diseño incluye identidad de marca, sistema de UI, landing pública, prototipo navegable end-to-end del producto, plantilla del informe creativo, pieza de motion y deck para pilotos corporativos.</p>
+
+    <div class="toc">
+      <strong style="font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--paper-500); display: block; margin-bottom: 12px;">Índice</strong>
+      <ol>
+        <li><a href="#audience">Audiencia y contexto de uso</a></li>
+        <li><a href="#principles">Principios de diseño</a></li>
+        <li><a href="#tone">Tono y lenguaje</a></li>
+        <li><a href="#brand">Personalidad de marca</a></li>
+        <li><a href="#system">Sistema visual</a></li>
+        <li><a href="#dont">Qué nunca haremos</a></li>
+        <li><a href="#deliverables">Entregables y dependencias</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="audience">
+    <div class="num">02 · Audiencia</div>
+    <h2>Para quién diseñamos</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Decisores</h3>
+        <p>CMOs, directores de marketing, directores de comunicación, jefes de insights y responsables de eventos en corporates españoles. Compran pilotos premium, no SaaS barato. Necesitan defender decisiones creativas internamente con evidencia presentable.</p>
+      </div>
+      <div>
+        <h3>Operadores</h3>
+        <p>Creativos, planners, editores, content managers y consultores de agencia. Suben las piezas, leen el timeline, anotan timecodes, comparan versiones y exportan informes. Pasan horas en la herramienta cada semana.</p>
+      </div>
+      <div>
+        <h3>Validadores</h3>
+        <p>Legal, procurement, IT y compliance. No usan el producto pero lo aprueban: SSO, DPA, hosting EU, política de retención, MFA, auditoría. La UI debe transmitir madurez enterprise desde el primer pixel.</p>
+      </div>
+      <div>
+        <h3>Espectadores</h3>
+        <p>Comités creativos y reviewers que reciben el PDF. Lo leen 8 minutos. Si no entienden la decisión recomendada en la página 1, el producto falla — sin importar cuán precisa sea la inferencia.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="principles">
+    <div class="num">03 · Principios</div>
+    <h2>Cinco principios <em>no negociables</em></h2>
+    <div class="grid-3">
+      <div class="principle">
+        <div class="n">P · 01</div>
+        <h4>Decisión, no datos.</h4>
+        <p>Cada métrica vive junto a una acción recomendada. Si un score no habilita una decisión, lo escondemos.</p>
+      </div>
+      <div class="principle">
+        <div class="n">P · 02</div>
+        <h4>Confianza calibrada.</h4>
+        <p>Nunca presentamos un número sin su nivel de confianza, su benchmark y su evidencia. La incertidumbre es parte del producto.</p>
+      </div>
+      <div class="principle">
+        <div class="n">P · 03</div>
+        <h4>Instrumento, no oráculo.</h4>
+        <p>La estética es la de un osciloscopio o una cabina de mezclas, no la de un asistente mágico. Densidad informativa, monoespaciada, ejes visibles.</p>
+      </div>
+      <div class="principle">
+        <div class="n">P · 04</div>
+        <h4>Timecode primero.</h4>
+        <p>Toda recomendación está anclada a un segundo concreto del vídeo. El timeline es la columna vertebral, no un detalle.</p>
+      </div>
+      <div class="principle">
+        <div class="n">P · 05</div>
+        <h4>Imprimible siempre.</h4>
+        <p>Cada vista del producto debe traducirse a una página A4. En corporates, la decisión circula en PDF.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="tone">
+    <div class="num">04 · Tono y lenguaje</div>
+    <h2>Cómo hablamos</h2>
+    <p>El informe estratégico es muy claro: este producto se cae si exagera. La voz es la de un científico que lleva 15 años en publicidad. Precisa, con criterio, sin promesas absolutas y sin jerga vacía.</p>
+
+    <h3>Vocabulario permitido vs. vocabulario prohibido</h3>
+    <table>
+      <thead>
+        <tr><th>USAR</th><th>EVITAR</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="use">Respuesta cerebral predicha</td><td class="avoid">Medimos emoción real</td></tr>
+        <tr><td class="use">Indicadores comparativos</td><td class="avoid">Garantizamos recuerdo o compra</td></tr>
+        <tr><td class="use">Hipótesis de mejora creativa</td><td class="avoid">Manipulación subconsciente</td></tr>
+        <tr><td class="use">Patrones compatibles con procesamiento visual</td><td class="avoid">Leemos la mente del consumidor</td></tr>
+        <tr><td class="use">Pretest neuro-informado</td><td class="avoid">Sustituto de test con usuarios</td></tr>
+        <tr><td class="use">Complemento a métricas reales</td><td class="avoid">Predice el ROI</td></tr>
+      </tbody>
+    </table>
+
+    <div class="pull">"El producto no se vende como lectura de la mente. Se vende como decisión creativa anticipada."</div>
+  </section>
+
+  <section id="brand">
+    <div class="num">05 · Personalidad de marca</div>
+    <h2>El nombre y lo que evoca</h2>
+    <p><strong>PraevIA</strong> proviene del latín <em>praevia</em> — "que precede, que va por delante". Embebido en la palabra: <strong>IA</strong> — inteligencia artificial. La marca es literalmente un camino que precede, leído por una IA.</p>
+    <p>Símbolo: una <strong>apertura</strong> u <strong>ojo de instrumento</strong> — el círculo que <em>observa antes</em>. La pupila descentrada hacia la izquierda señala anticipación: mira lo que aún no ocurre. La mácrón superior es la marca latina de precedencia.</p>
+    <p class="lede">Marca = <em>instrumento que mira antes</em>. Producto = <em>instrumento que mide la respuesta cerebral predicha</em>. La identidad debe leerse como un aparato, no como un servicio.</p>
+  </section>
+
+  <section id="system">
+    <div class="num">06 · Sistema visual</div>
+    <h2>Color, tipografía, densidad</h2>
+
+    <h3>Paleta INK — instrumento (modo dominante)</h3>
+    <div class="swatch-row">
+      <div class="sw" style="background: #07090C; color: #BDC8D6;">000<br>#07090C</div>
+      <div class="sw" style="background: #0A0E13; color: #BDC8D6;">050<br>#0A0E13</div>
+      <div class="sw" style="background: #161D26; color: #BDC8D6;">200<br>#161D26</div>
+      <div class="sw" style="background: #2A3441; color: #BDC8D6;">400<br>#2A3441</div>
+      <div class="sw" style="background: #8A9AAE; color: #07090C;">700<br>#8A9AAE</div>
+      <div class="sw" style="background: #E8EDF3; color: #07090C;">900<br>#E8EDF3</div>
+    </div>
+
+    <h3>Paleta SIGNAL — acentos</h3>
+    <div class="swatch-row">
+      <div class="sw" style="background: #E8A33D; color: #07090C;">amber<br>#E8A33D</div>
+      <div class="sw" style="background: #6FD4E8; color: #07090C;">cyan<br>#6FD4E8</div>
+      <div class="sw" style="background: #B8E04A; color: #07090C;">lime<br>#B8E04A</div>
+      <div class="sw" style="background: #E8674A; color: #07090C;">coral<br>#E8674A</div>
+      <div class="sw" style="background: #9B7FE8; color: #07090C;">violet<br>#9B7FE8</div>
+      <div class="sw" style="background: #FBFAF6; color: #14110B;">paper<br>#FBFAF6</div>
+    </div>
+
+    <h3>Reglas de uso del color</h3>
+    <ul class="bullets">
+      <li><strong>Amber</strong> es el acento primario de marca. Picos del timeline, CTA principales, énfasis editorial.</li>
+      <li><strong>Cyan</strong> es la línea de la versión de comparación (Versión B). Nunca dos amber simultáneos.</li>
+      <li><strong>Lime / Coral</strong> codifican picos y valles del timeline. No para botones ni para texto largo.</li>
+      <li><strong>Violet</strong> reservado para la capa narrativa / lenguaje en visualizaciones multimodales.</li>
+      <li><strong>Paper</strong> domina el informe imprimible y la documentación; nunca en el dashboard.</li>
+    </ul>
+
+    <h3>Tipografía</h3>
+    <div class="type-spec">
+      <div class="info"><b>Newsreader</b>Display · serif</div>
+      <div class="sample" style="font-family: 'Newsreader'; font-size: 36px; font-weight: 400; line-height: 1.05; letter-spacing: -0.018em;">Decide qué versión usar.</div>
+    </div>
+    <div class="type-spec">
+      <div class="info"><b>Geist</b>UI · sans-serif</div>
+      <div class="sample" style="font-family: 'Geist'; font-size: 22px; font-weight: 500;">Comparativa A/B/C · 3 versiones analizadas</div>
+    </div>
+    <div class="type-spec">
+      <div class="info"><b>JetBrains Mono</b>Datos · monospace</div>
+      <div class="sample" style="font-family: 'JetBrains Mono'; font-size: 16px; font-weight: 500;">NRI 0.78 · 00:14.220 · CONF 0.92</div>
+    </div>
+
+    <h3>Densidad y ritmo</h3>
+    <p>Sistema base de 4px. El producto puede llegar a densidad alta (estilo Bloomberg) en vistas de comparación, pero las vistas de decisión (informe ejecutivo, hero de landing) respiran. Nunca mezclar las dos densidades en una misma vista.</p>
+  </section>
+
+  <section id="dont">
+    <div class="num">07 · Qué nunca haremos</div>
+    <h2>La lista de <em>no</em></h2>
+    <ul class="bullets">
+      <li>Cerebros estilizados, ondas mentales, siluetas con neuronas brillando. Esto no es neurociencia mística.</li>
+      <li>Gradientes saturados violeta-rosa estilo "AI startup 2023".</li>
+      <li>Inter, Roboto, Arial, system-ui como fuente principal. Geist es nuestra alternativa moderna.</li>
+      <li>Iconos genéricos de Lucide / Heroicons sin contexto. Si usamos iconos, se dibujan para PraevIA.</li>
+      <li>Microcopy con emojis. La voz es seria.</li>
+      <li>Promesas absolutas en cualquier parte del producto: "te garantiza", "predice exactamente", "lee la mente".</li>
+      <li>Animaciones decorativas en el dashboard. La motion existe para guiar la atención hacia la decisión.</li>
+      <li>Drop shadows blandos estilo Material. Las superficies se separan por borde 1px y luminosidad, no por sombra.</li>
+    </ul>
+  </section>
+
+  <section id="deliverables" class="no-border">
+    <div class="num">08 · Entregables</div>
+    <h2>Qué hay en este paquete</h2>
+    <table>
+      <thead>
+        <tr><th>Pieza</th><th>Formato</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Brief de diseño (este documento)</td><td>HTML navegable, exportable a PDF</td><td>v1.0</td></tr>
+        <tr><td>Sistema de identidad</td><td>Página de identidad: logo, color, type</td><td>v1.0</td></tr>
+        <tr><td>Sistema de UI</td><td>Componentes y patrones</td><td>v1.0</td></tr>
+        <tr><td>Landing pública</td><td>HTML responsive</td><td>v1.0</td></tr>
+        <tr><td>Prototipo NeuroImpact Analyzer</td><td>React, navegable, datos realistas</td><td>v1.0</td></tr>
+        <tr><td>Plantilla informe creativo</td><td>HTML print-ready (A4)</td><td>v1.0</td></tr>
+        <tr><td>Pieza de motion</td><td>HTML/Canvas 1920×1080</td><td>v1.0</td></tr>
+        <tr><td>Pitch deck para pilotos</td><td>HTML, navegable y exportable a PPTX</td><td>v1.0</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="sign">
+    <div>PraevIA · Brief de diseño · v1.0</div>
+    <div>01 · 05 · 2026</div>
+  </div>
+
+</div>
+</body>
+</html>

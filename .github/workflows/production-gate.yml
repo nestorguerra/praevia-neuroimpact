@@ -1,0 +1,161 @@
+name: Production Gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  production-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e "backend[preprocessing]"
+
+      - name: Install Playwright Chromium
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Python Playwright Chromium
+        run: python -m playwright install chromium
+
+      - name: Compile backend and workers
+        run: python -m compileall backend/app worker/preprocessing worker/tribe/tribe_worker worker/scoring
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Start local app
+        working-directory: frontend
+        run: |
+          npm run dev -- --port 5173 > /tmp/praevia-vite.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://localhost:5173/ && exit 0
+            sleep 1
+          done
+          cat /tmp/praevia-vite.log
+          exit 1
+
+      - name: Start local production dependencies
+        run: |
+          docker compose -f infra/docker-compose.local.yml up -d postgres redis minio minio-init
+          for i in {1..30}; do
+            docker compose -f infra/docker-compose.local.yml ps
+            nc -z localhost 5432 && nc -z localhost 9000 && exit 0
+            sleep 2
+          done
+          docker compose -f infra/docker-compose.local.yml logs
+          exit 1
+
+      - name: Start backend API
+        env:
+          APP_ENV: local_ci
+          APP_PUBLIC_URL: http://localhost:5173
+          API_PUBLIC_URL: http://localhost:8000
+          AUTH_MODE: local
+          PERSISTENCE_MODE: db
+          DATABASE_URL: postgresql://neuroimpact:neuroimpact@localhost:5432/neuroimpact
+          STORAGE_MODE: s3
+          S3_ENDPOINT: http://localhost:9000
+          S3_REGION: eu-west-1
+          S3_BUCKET: neuroimpact-local
+          S3_ACCESS_KEY_ID: local
+          S3_SECRET_ACCESS_KEY: localpassword
+          S3_CREATE_BUCKET_IF_MISSING: "true"
+          TRIBE_WORKER_MODE: mock
+          ALLOW_MOCK_WORKER_IN_PRODUCTION_GATE: "true"
+          CORS_ALLOWED_ORIGINS: http://localhost:5173
+          ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,testserver
+          FORCE_HTTPS: "false"
+        run: |
+          cd backend
+          python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > /tmp/praevia-backend.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://localhost:8000/ready/dependencies?strict=true && exit 0
+            sleep 2
+          done
+          cat /tmp/praevia-backend.log
+          exit 1
+
+      - name: Smoke strict
+        run: node scripts/smoke.mjs
+
+      - name: Production dependency gate
+        run: node scripts/production-dependencies-gate.mjs
+
+      - name: PDF regression
+        run: node scripts/pdf-regression.mjs
+
+      - name: Server PDF regression
+        run: node scripts/pdf-server-gate.mjs
+
+      - name: Visual regression
+        run: node scripts/visual-regression.mjs
+
+      - name: Commercial gate
+        working-directory: frontend
+        run: npm run commercial:gate
+
+      - name: Workflow gate
+        working-directory: frontend
+        run: npm run workflow:gate
+
+      - name: Benchmark gate
+        working-directory: frontend
+        run: npm run benchmark:gate
+
+      - name: Enterprise gate
+        working-directory: frontend
+        run: npm run enterprise:gate
+
+      - name: Admin costs gate
+        working-directory: frontend
+        run: npm run admin:costs-gate
+
+      - name: Observability gate
+        working-directory: frontend
+        run: npm run observability:gate
+
+      - name: Worker mock gate
+        working-directory: frontend
+        run: npm run tribe:gate
+
+      - name: Worker real gate optional
+        working-directory: frontend
+        run: npm run worker:real-gate
+
+      - name: E2E Production MVP
+        run: node scripts/e2e-production-mvp.mjs
+
+      - name: Full strict production gate
+        working-directory: frontend
+        run: npm run production:gate
+
+      - name: Upload QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: praevia-production-gate-artifacts
+          path: /tmp/praevia-neuroimpact-qa
+          if-no-files-found: ignore

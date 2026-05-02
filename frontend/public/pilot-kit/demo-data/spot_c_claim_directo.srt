@@ -1,0 +1,19 @@
+1
+00:00:00,000 --> 00:00:04,000
+Tres versiones parecen buenas hasta que hay que elegir una.
+
+2
+00:00:04,000 --> 00:00:09,000
+NeuroImpact Analyzer compara video, audio y texto antes de producir.
+
+3
+00:00:09,000 --> 00:00:15,000
+El resultado no es un numero decorativo: es una decision con timecode.
+
+4
+00:00:15,000 --> 00:00:22,000
+Usa A como master, dona el cierre de B y recorta el valle central.
+
+5
+00:00:22,000 --> 00:00:30,000
+Sabe que version usar. Antes de producir.

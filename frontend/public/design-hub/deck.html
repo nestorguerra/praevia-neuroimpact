@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PraevIA · Pitch Pilotos</title>
+<link rel="stylesheet" href="tokens.css"/>
+<script src="deck-stage.js"></script>
+<style>
+  html, body { background: #0A0E13; }
+  deck-stage { background: #0A0E13; }
+  deck-stage section { background: var(--ink-50); color: var(--ink-900); padding: 80px 96px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  deck-stage section.dark { background: #0A0E13; }
+  /* shared */
+  .kicker { font-family: var(--f-mono); font-size: 14px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--signal-amber); display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+  .kicker::before { content: ''; width: 36px; height: 1px; background: var(--signal-amber); }
+  h1 { font-family: var(--f-display); font-size: 124px; font-weight: 400; line-height: 0.95; letter-spacing: -0.028em; max-width: 16ch; }
+  h1 em { font-style: italic; color: var(--signal-amber); }
+  h2 { font-family: var(--f-display); font-size: 80px; font-weight: 400; line-height: 1; letter-spacing: -0.022em; max-width: 18ch; }
+  h2 em { font-style: italic; color: var(--signal-amber); }
+  .lede { font-family: var(--f-display); font-size: 30px; line-height: 1.45; color: var(--text-2); max-width: 56ch; margin-top: 32px; }
+  .lede em { font-style: italic; color: var(--ink-900); }
+
+  .corner-mark { position: absolute; top: 40px; left: 96px; display:flex; align-items:center; gap:10px; font-family: var(--f-mono); font-size: 13px; letter-spacing: 0.18em; color: var(--text-3); text-transform: uppercase; }
+  .page-num { position: absolute; top: 40px; right: 96px; font-family: var(--f-mono); font-size: 13px; letter-spacing: 0.18em; color: var(--text-3); text-transform: uppercase; }
+
+  .meta-bar { position: absolute; bottom: 50px; left: 96px; right: 96px; display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 13px; letter-spacing: 0.16em; color: var(--text-3); text-transform: uppercase; padding-top: 18px; border-top: 1px solid var(--border); }
+  .meta-bar b { color: var(--ink-900); font-weight: 500; }
+
+  /* cover */
+  .cover-stack { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+  .wm-row { display: flex; align-items: center; gap: 14px; }
+  .wm { font-family: var(--f-display); font-size: 32px; font-weight: 500; letter-spacing: -0.018em; }
+  .wm em { font-style: italic; font-weight: 400; }
+  .wm b { font-family: var(--f-ui); font-weight: 600; font-size: 0.92em; }
+
+  /* problem */
+  .quote { font-family: var(--f-display); font-size: 56px; font-style: italic; line-height: 1.2; letter-spacing: -0.012em; color: var(--ink-900); max-width: 26ch; }
+  .quote-attr { font-family: var(--f-mono); font-size: 16px; letter-spacing: 0.18em; color: var(--text-3); text-transform: uppercase; margin-top: 32px; }
+
+  /* metrics block */
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
+  .metric-card { padding: 32px; background: var(--ink-100); border: 1px solid var(--border); border-radius: 6px; }
+  .metric-card .num { font-family: var(--f-mono); font-size: 72px; font-weight: 500; color: var(--signal-amber); letter-spacing: -0.025em; line-height: 1; }
+  .metric-card .lbl { font-family: var(--f-mono); font-size: 13px; letter-spacing: 0.16em; color: var(--text-3); text-transform: uppercase; margin-top: 14px; }
+  .metric-card .desc { font-family: var(--f-display); font-size: 19px; line-height: 1.45; margin-top: 14px; color: var(--ink-900); }
+
+  /* product split */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; margin-top: 48px; flex: 1; }
+  .split .left h3 { font-family: var(--f-display); font-size: 36px; font-weight: 500; letter-spacing: -0.018em; line-height: 1.1; margin-bottom: 18px; }
+  .split p { font-family: var(--f-display); font-size: 21px; line-height: 1.5; color: var(--text-2); }
+  .scope-vis { background: var(--ink-100); border: 1px solid var(--border); border-radius: 6px; padding: 24px; aspect-ratio: 1; position: relative; }
+  .scope-vis::before { content: 'NEUROIMPACT_ANALYZER · LIVE'; position: absolute; top: 18px; left: 22px; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.16em; color: var(--signal-amber); }
+  .scope-vis::after { content: 'CONF 0.92'; position: absolute; top: 18px; right: 22px; font-family: var(--f-mono); font-size: 12px; color: var(--text-3); letter-spacing: 0.14em; }
+
+  /* asks */
+  .ask-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; }
+  .ask { padding: 28px 32px; background: var(--ink-100); border: 1px solid var(--border); border-radius: 6px; display: flex; flex-direction: column; }
+  .ask.feat { background: var(--ink-50); border-color: var(--signal-amber); position: relative; }
+  .ask.feat::before { content: 'RECOMENDADO'; position: absolute; top: -12px; left: 24px; background: var(--signal-amber); color: var(--ink-50); font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.16em; padding: 4px 10px; border-radius: 2px; }
+  .ask .nom { font-family: var(--f-mono); font-size: 13px; letter-spacing: 0.16em; color: var(--text-3); text-transform: uppercase; }
+  .ask .ttl { font-family: var(--f-display); font-size: 36px; font-weight: 500; letter-spacing: -0.018em; margin: 12px 0 8px; line-height: 1.05; }
+  .ask .pr { font-family: var(--f-mono); font-size: 18px; color: var(--signal-amber); margin-bottom: 22px; letter-spacing: -0.005em; }
+  .ask ul { list-style: none; padding: 0; margin: 0 0 28px; flex: 1; }
+  .ask ul li { font-family: var(--f-display); font-size: 17px; padding: 9px 0; border-bottom: 1px dashed var(--ink-400); line-height: 1.4; }
+
+  /* WHY us */
+  .why-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
+  .why-card { background: var(--ink-100); border: 1px solid var(--border); border-radius: 6px; padding: 32px; }
+  .why-card .icon { color: var(--signal-amber); margin-bottom: 18px; }
+  .why-card h4 { font-family: var(--f-display); font-size: 28px; font-weight: 500; letter-spacing: -0.012em; margin-bottom: 10px; }
+  .why-card p { font-family: var(--f-display); font-size: 18px; line-height: 1.5; color: var(--text-2); }
+
+  /* big claim slide */
+  .claim h2 { font-size: 116px; max-width: 14ch; }
+
+  /* timeline mini */
+  .road { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 56px; border-top: 1px solid var(--border); }
+  .road-step { padding: 32px 28px; border-right: 1px solid var(--border); position: relative; }
+  .road-step:last-child { border-right: none; }
+  .road-step::before { content: ''; position: absolute; left: -7px; top: -7px; width: 12px; height: 12px; background: var(--signal-amber); border-radius: 50%; }
+  .road-step .step-num { font-family: var(--f-mono); font-size: 13px; letter-spacing: 0.16em; color: var(--signal-amber); text-transform: uppercase; margin-bottom: 12px; }
+  .road-step h4 { font-family: var(--f-display); font-size: 26px; font-weight: 500; line-height: 1.15; margin-bottom: 8px; letter-spacing: -0.012em; }
+  .road-step p { font-family: var(--f-display); font-size: 16px; line-height: 1.45; color: var(--text-2); }
+
+  /* dark close */
+  .dark .kicker { color: var(--signal-amber); }
+  .dark h1, .dark h2 { color: #E8EDF3; }
+  .dark .lede { color: rgba(232,237,243,0.7); }
+  .dark .meta-bar { color: rgba(232,237,243,0.5); border-top-color: rgba(255,255,255,0.1); }
+  .dark .meta-bar b { color: #E8EDF3; }
+  .dark .corner-mark, .dark .page-num { color: rgba(232,237,243,0.5); }
+
+  /* dot grid bg */
+  .dotgrid { background-image: radial-gradient(circle, rgba(232,237,243,0.08) 1px, transparent 1px); background-size: 28px 28px; }
+</style>
+</head>
+<body>
+
+<deck-stage>
+
+<!-- 01 · COVER -->
+<section data-screen-label="01 Portada">
+  <div class="corner-mark">
+    <svg viewBox="0 0 32 32" width="20" height="20" style="color: #E8EDF3;">
+      <circle cx="16" cy="16" r="12.5" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35"/>
+      <circle cx="16" cy="16" r="7.5" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <circle cx="13" cy="16" r="2.4" fill="#E8A33D"/>
+      <line x1="6" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4"/>
+    </svg>
+    <span class="wm">prae<em>vi</em><b>A</b></span>
+    <span style="border-left: 1px solid var(--border); padding-left: 14px; margin-left: 6px;">NEUROIMPACT ANALYZER</span>
+  </div>
+  <div class="page-num">PITCH · PILOTOS · 01.05.2026</div>
+
+  <div class="cover-stack">
+    <div></div>
+    <div>
+      <div class="kicker">Pretest neurocognitivo · in silico · B2B</div>
+      <h1>Decide qué <em>versión</em> usar.<br/>Antes de producir.</h1>
+      <p class="lede">Pretest multimodal de vídeo, audio y texto. Comparativas A/B/C con recomendaciones <em>por timecode</em>. Para directores de marketing que firman antes del lunes.</p>
+    </div>
+    <div></div>
+  </div>
+
+  <div class="meta-bar">
+    <span>NÉSTOR GARCÍA · Founder &amp; Head of Insights</span>
+    <span>MADRID · 2026</span>
+    <span>RONDA · <b>PILOTOS PREMIUM</b></span>
+  </div>
+</section>
+
+<!-- 02 · PROBLEM -->
+<section data-screen-label="02 Problema">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b style="font-family:var(--f-ui);font-weight:600;">A</b> · 02 PROBLEMA</div>
+  <div class="page-num">02 / 10</div>
+
+  <div class="kicker">El estado del arte</div>
+  <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 64px; align-items: center; flex:1;">
+    <div>
+      <div class="quote">"Versionas el spot tres veces. Lo discutes en una sala. Lo apruebas porque hay que apretar el calendario. <em style="color:var(--signal-amber);">Vuelas</em>. Y nadie sabe si era la versión correcta."</div>
+      <div class="quote-attr">— Director de Marketing · Banca · 2025</div>
+    </div>
+    <div style="display:flex; flex-direction: column; gap: 16px;">
+      <div style="background:var(--ink-100); border:1px solid var(--border); border-radius:6px; padding:24px;">
+        <div style="font-family:var(--f-mono); font-size:12px; letter-spacing:0.16em; color:var(--signal-coral); text-transform:uppercase; margin-bottom:8px;">SÍNTOMA 01</div>
+        <div style="font-family:var(--f-display); font-size:22px; font-weight:500; line-height:1.2;">Tres versiones, 24 horas para decidir.</div>
+      </div>
+      <div style="background:var(--ink-100); border:1px solid var(--border); border-radius:6px; padding:24px;">
+        <div style="font-family:var(--f-mono); font-size:12px; letter-spacing:0.16em; color:var(--signal-coral); text-transform:uppercase; margin-bottom:8px;">SÍNTOMA 02</div>
+        <div style="font-family:var(--f-display); font-size:22px; font-weight:500; line-height:1.2;">Brand lift y focus groups llegan tarde.</div>
+      </div>
+      <div style="background:var(--ink-100); border:1px solid var(--border); border-radius:6px; padding:24px;">
+        <div style="font-family:var(--f-mono); font-size:12px; letter-spacing:0.16em; color:var(--signal-coral); text-transform:uppercase; margin-bottom:8px;">SÍNTOMA 03</div>
+        <div style="font-family:var(--f-display); font-size:22px; font-weight:500; line-height:1.2;">"El final no funciona" no es accionable.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meta-bar"><span>EL PROBLEMA</span><span>Decisiones creativas que cuestan 6-12 cifras</span><span>SE TOMAN A CIEGAS</span></div>
+</section>
+
+<!-- 03 · CLAIM -->
+<section class="dark dotgrid claim" data-screen-label="03 Tesis">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b>A</b> · 03 TESIS</div>
+  <div class="page-num">03 / 10</div>
+
+  <div style="margin: auto 0;">
+    <div class="kicker">La tesis</div>
+    <h2>El siguiente <em>instrumento</em> de marketing<br/>no medirá emociones.<br/>Las <em>predecirá</em>.</h2>
+  </div>
+
+  <div class="meta-bar"><span>NEUROIMPACT ANALYZER</span><span>v1.0 · 2026</span><span>HIPÓTESIS DE MEJORA · NO BOLA DE CRISTAL</span></div>
+</section>
+
+<!-- 04 · PRODUCT -->
+<section data-screen-label="04 Producto">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b>A</b> · 04 PRODUCTO</div>
+  <div class="page-num">04 / 10</div>
+
+  <div class="kicker">La plataforma</div>
+  <h2>Un instrumento. Tres modalidades.<br/><em>Una decisión</em> antes del lunes.</h2>
+
+  <div class="split">
+    <div class="left">
+      <h3>NeuroImpact Analyzer</h3>
+      <p>Plataforma SaaS B2B que analiza vídeo, audio y texto en paralelo, los compara contra un benchmark sectorial y devuelve un timeline accionable con recomendaciones por timecode.</p>
+      <p style="margin-top: 24px;">Subes 1, 2 o 3 versiones. En 12 minutos por minuto de pieza tienes ranking, mix recomendado y un PDF listo para circular en el comité creativo.</p>
+      <div style="margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <span style="font-family:var(--f-mono);font-size:13px;letter-spacing:0.14em;padding:6px 12px;border-radius:2px;background:rgba(232,163,61,0.15);color:var(--signal-amber);text-transform:uppercase;">9 MÉTRICAS</span>
+        <span style="font-family:var(--f-mono);font-size:13px;letter-spacing:0.14em;padding:6px 12px;border-radius:2px;background:var(--ink-200);color:var(--text-2);border:1px solid var(--border);text-transform:uppercase;">A/B/C</span>
+        <span style="font-family:var(--f-mono);font-size:13px;letter-spacing:0.14em;padding:6px 12px;border-radius:2px;background:var(--ink-200);color:var(--text-2);border:1px solid var(--border);text-transform:uppercase;">PDF EXPORT</span>
+        <span style="font-family:var(--f-mono);font-size:13px;letter-spacing:0.14em;padding:6px 12px;border-radius:2px;background:var(--ink-200);color:var(--text-2);border:1px solid var(--border);text-transform:uppercase;">HOSTING UE</span>
+      </div>
+    </div>
+    <div class="scope-vis">
+      <svg viewBox="0 0 400 380" style="width:100%;height:100%;">
+        <g stroke="rgba(0,0,0,0.05)" stroke-width="1">
+          <line x1="0" y1="80" x2="400" y2="80"/><line x1="0" y1="160" x2="400" y2="160"/>
+          <line x1="0" y1="240" x2="400" y2="240"/><line x1="0" y1="320" x2="400" y2="320"/>
+          <line x1="80" y1="0" x2="80" y2="380"/><line x1="160" y1="0" x2="160" y2="380"/>
+          <line x1="240" y1="0" x2="240" y2="380"/><line x1="320" y1="0" x2="320" y2="380"/>
+        </g>
+        <path d="M 0 200 Q 40 160, 80 180 T 160 160 T 240 130 T 320 200 T 400 160" stroke="#E8A33D" stroke-width="2.4" fill="none"/>
+        <path d="M 0 220 Q 40 240, 80 220 T 160 230 T 240 215 T 320 235 T 400 230" stroke="#6FD4E8" stroke-width="2" fill="none" opacity="0.85"/>
+        <circle cx="240" cy="130" r="5" fill="#B8E04A"/>
+        <text x="248" y="124" font-family="JetBrains Mono" font-size="11" fill="#B8E04A">PEAK</text>
+        <circle cx="320" cy="200" r="5" fill="#E8674A"/>
+        <text x="248" y="216" font-family="JetBrains Mono" font-size="11" fill="#E8674A" text-anchor="end">VALLEY</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="meta-bar"><span>SaaS B2B</span><span>VÍDEO · AUDIO · TEXTO</span><span>9 MÉTRICAS · 1 DECISIÓN</span></div>
+</section>
+
+<!-- 05 · WHY NOW -->
+<section data-screen-label="05 Por qué ahora">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b>A</b> · 05 POR QUÉ AHORA</div>
+  <div class="page-num">05 / 10</div>
+
+  <div class="kicker">El momento</div>
+  <h2>Tres curvas que ya cruzaron.</h2>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="num">−71%</div>
+      <div class="lbl">Coste de inferencia multimodal</div>
+      <div class="desc">desde 2023. El análisis que costaba miles cuesta hoy decenas.</div>
+    </div>
+    <div class="metric-card">
+      <div class="num">×3.2</div>
+      <div class="lbl">Volumen de versiones por campaña</div>
+      <div class="desc">CTV, vertical, social, OOH digital. Más decisiones, menos tiempo.</div>
+    </div>
+    <div class="metric-card">
+      <div class="num">2026</div>
+      <div class="lbl">Ventana competitiva</div>
+      <div class="desc">grandes incumbents aún no han lanzado producto operativo en español.</div>
+    </div>
+  </div>
+
+  <div class="meta-bar"><span>WHY NOW</span><span>FUENTES · MARKETSANDMARKETS, IAB, CB INSIGHTS · 2025</span><span>PRIMERA VENTANA · 12-18 MESES</span></div>
+</section>
+
+<!-- 06 · RESULT -->
+<section class="dark dotgrid" data-screen-label="06 Resultado">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b>A</b> · 06 RESULTADO</div>
+  <div class="page-num">06 / 10</div>
+
+  <div class="kicker">Caso real · Spot 30s · Banca</div>
+  <h2>De 0.78 a <em>0.89</em> de NRI<br/>aplicando 5 cambios.</h2>
+
+  <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 64px;">
+    <div style="text-align:center; padding: 32px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius:6px;">
+      <div style="font-family:var(--f-mono);font-size:13px;letter-spacing:0.16em;color:rgba(232,237,243,0.5);text-transform:uppercase;margin-bottom:18px;">VERSIÓN MASTER · ANTES</div>
+      <div style="font-family:var(--f-mono);font-size:96px;font-weight:500;color:rgba(232,237,243,0.7);letter-spacing:-0.025em;line-height:1;">0.78</div>
+      <div style="font-family:var(--f-mono);font-size:14px;letter-spacing:0.14em;color:rgba(232,237,243,0.4);text-transform:uppercase;margin-top:14px;">NRI</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <div style="font-family:var(--f-display);font-size:40px;color:var(--signal-amber);font-style:italic;">5 cambios →</div>
+    </div>
+    <div style="text-align:center; padding: 32px; background: rgba(232,163,61,0.08); border: 1px solid var(--signal-amber); border-radius:6px;">
+      <div style="font-family:var(--f-mono);font-size:13px;letter-spacing:0.16em;color:var(--signal-amber);text-transform:uppercase;margin-bottom:18px;">DESPUÉS · MISMA SEMANA</div>
+      <div style="font-family:var(--f-mono);font-size:96px;font-weight:500;color:var(--signal-amber);letter-spacing:-0.025em;line-height:1;">0.89</div>
+      <div style="font-family:var(--f-mono);font-size:14px;letter-spacing:0.14em;color:rgba(232,237,243,0.5);text-transform:uppercase;margin-top:14px;">NRI · +14%</div>
+    </div>
+  </div>
+
+  <div class="meta-bar"><span>SPOT 30S HIPOTECA VERDE</span><span>5 RECOMENDACIONES POR TIMECODE</span><span>ACTION READINESS · +38%</span></div>
+</section>
+
+<!-- 07 · WHY US -->
+<section data-screen-label="07 Por qué nosotros">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b>A</b> · 07 POR QUÉ NOSOTROS</div>
+  <div class="page-num">07 / 10</div>
+
+  <div class="kicker">Diferencial</div>
+  <h2>Un instrumento. <em>No una bola de cristal.</em></h2>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="5"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div>
+      <h4>Lenguaje calibrado</h4>
+      <p>"Respuesta cerebral predicha", "patrones compatibles con". Nunca prometemos lo que no sabemos. Eso protege tu marca y la nuestra.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 22 L10 16 L14 18 L20 10 L28 12"/></svg></div>
+      <h4>Recomendaciones por timecode</h4>
+      <p>No "el final no funciona". Sí "00:18-00:22, recortar 6 palabras". Ejecutables sin reuniones intermedias.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="6" width="10" height="20"/><rect x="18" y="6" width="10" height="20"/></svg></div>
+      <h4>Multimodal real</h4>
+      <p>No analizamos solo el guion ni solo la imagen: vídeo + audio + texto integrados con ponderación por modalidad dominante.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M16 4 L26 8 L26 16 Q 26 24, 16 28 Q 6 24, 6 16 L 6 8 Z"/></svg></div>
+      <h4>Hosting UE · DPA</h4>
+      <p>Solo analiza piezas creativas. Nunca biometría real. Trazabilidad total: cada análisis tiene ID, modelo y benchmark versionado.</p>
+    </div>
+  </div>
+
+  <div class="meta-bar"><span>DIFERENCIAL</span><span>VS NEUROMARKETING CLÁSICO · VS GENAI BLACK BOX</span><span>VENDEMOS PRECISIÓN, NO MAGIA</span></div>
+</section>
+
+<!-- 08 · ROADMAP -->
+<section data-screen-label="08 Roadmap del piloto">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b>A</b> · 08 ROADMAP</div>
+  <div class="page-num">08 / 10</div>
+
+  <div class="kicker">Cómo trabajamos</div>
+  <h2>Cuatro semanas. Una <em>decisión</em>.</h2>
+
+  <div class="road">
+    <div class="road-step">
+      <div class="step-num">SEM 01 · KICKOFF</div>
+      <h4>Calibración</h4>
+      <p>Workshop de 90 min. Definimos marca, canales, objetivo y benchmarks que importan.</p>
+    </div>
+    <div class="road-step">
+      <div class="step-num">SEM 02 · ANÁLISIS</div>
+      <h4>10–30 piezas</h4>
+      <p>Tu equipo sube. Nosotros procesamos. Tú revisas el dashboard en directo.</p>
+    </div>
+    <div class="road-step">
+      <div class="step-num">SEM 03 · LECTURA</div>
+      <h4>Workshop de hallazgos</h4>
+      <p>Sesión con creativos y agencia. Recomendaciones por pieza, por canal y por mix.</p>
+    </div>
+    <div class="road-step">
+      <div class="step-num">SEM 04 · CIERRE</div>
+      <h4>Re-análisis + KPIs</h4>
+      <p>Las versiones revisadas vuelven al instrumento. Comparamos delta esperado vs observado.</p>
+    </div>
+  </div>
+
+  <div class="meta-bar"><span>FORMATO PILOTO</span><span>4 SEMANAS · 2 WORKSHOPS · 1 INFORME EJECUTIVO</span><span>SIN COMPROMISO ANUAL</span></div>
+</section>
+
+<!-- 09 · ASK -->
+<section data-screen-label="09 La oferta">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b>A</b> · 09 LA OFERTA</div>
+  <div class="page-num">09 / 10</div>
+
+  <div class="kicker">Buscamos 5 marcas piloto en 2026</div>
+  <h2>Pilotos premium. <em>Antes</em> que SaaS.</h2>
+
+  <div class="ask-list">
+    <div class="ask">
+      <span class="nom">— SPRINT</span>
+      <div class="ttl">Sprint 10</div>
+      <div class="pr">12.000 – 20.000 €</div>
+      <ul>
+        <li>10 piezas analizadas</li>
+        <li>Informe creativo + ejecutivo</li>
+        <li>Workshop de lectura</li>
+        <li>Recomendaciones por timecode</li>
+      </ul>
+    </div>
+    <div class="ask feat">
+      <span class="nom">— PILOTO CORPORATIVO</span>
+      <div class="ttl">4 semanas</div>
+      <div class="pr">15.000 – 40.000 €</div>
+      <ul>
+        <li>10 – 30 assets</li>
+        <li>Comparativa A/B/C</li>
+        <li>Benchmarks calibrados</li>
+        <li>2 workshops + reanálisis</li>
+        <li>Acceso multi-usuario al producto</li>
+        <li>KPIs externos comparados</li>
+      </ul>
+    </div>
+    <div class="ask">
+      <span class="nom">— SAAS · LISTA DE ESPERA</span>
+      <div class="ttl">Professional</div>
+      <div class="pr">5.000 – 10.000 € / mes</div>
+      <ul>
+        <li>A/B/C ilimitado</li>
+        <li>Benchmark propio por marca</li>
+        <li>10 – 25 usuarios</li>
+        <li>Apertura tras 5 pilotos exitosos</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="meta-bar"><span>EL ASK</span><span>5 MARCAS PILOTO · 2026</span><span>SECTORES PRIORITARIOS · BANCA, RETAIL, AUTO, FARMA</span></div>
+</section>
+
+<!-- 10 · CLOSE -->
+<section class="dark dotgrid" data-screen-label="10 Cierre">
+  <div class="corner-mark">prae<em style="font-style:italic;font-weight:400;">vi</em><b>A</b> · 10 CIERRE</div>
+  <div class="page-num">10 / 10</div>
+
+  <div style="margin: auto 0;">
+    <div class="kicker">Una pregunta</div>
+    <h2>¿Qué versión <em>vas a producir</em><br/>el lunes?</h2>
+    <p class="lede">Si tu respuesta empieza por <em style="color: #E8EDF3;">"depende de lo que decida el comité"</em>, hablemos.</p>
+
+    <div style="display:flex; gap: 32px; align-items: center; margin-top: 56px;">
+      <div style="padding: 18px 28px; background: var(--signal-amber); color: var(--ink-50); font-family: var(--f-ui); font-weight: 600; font-size: 18px; border-radius: 4px;">→ Programar Sprint 10</div>
+      <div style="font-family: var(--f-mono); font-size: 14px; letter-spacing: 0.18em; color: rgba(232,237,243,0.6); text-transform: uppercase;">PRAEVIA.ES / DEMO</div>
+    </div>
+  </div>
+
+  <div class="meta-bar">
+    <span>NÉSTOR GARCÍA · nestor@praevia.es</span>
+    <span>MADRID · 2026</span>
+    <span>HOSTING UE · DPA DISPONIBLE</span>
+  </div>
+</section>
+
+</deck-stage>
+
+</body>
+</html>

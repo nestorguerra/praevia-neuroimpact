@@ -1,0 +1,13 @@
+{
+  "run_id": "local-run-001",
+  "asset_id": "local-asset-001",
+  "model_id": "facebook/tribev2",
+  "cache_dir": "/models/tribe",
+  "device": "cuda",
+  "inputs": {
+    "video_path": "/inputs/normalized_video.mp4",
+    "audio_path": "/inputs/audio_16k_mono.wav",
+    "text_path": "/inputs/transcript.whisper.json"
+  }
+}
+

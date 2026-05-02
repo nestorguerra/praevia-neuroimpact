@@ -1,0 +1,89 @@
+name: Deploy Production
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Existing or new image tag to deploy. Empty builds production-<sha>.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment: production
+    env:
+      IMAGE_NAMESPACE: ${{ vars.GHCR_IMAGE_NAMESPACE || github.repository_owner }}
+      IMAGE_TAG: ${{ inputs.image_tag || github.event.release.tag_name || format('production-{0}', github.sha) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR for push
+        run: echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build and push frontend
+        if: github.event_name == 'release' || inputs.image_tag == ''
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            -f frontend/Dockerfile \
+            --build-arg VITE_API_PUBLIC_URL="${{ vars.PRODUCTION_VITE_API_PUBLIC_URL }}" \
+            --build-arg VITE_AUTH_MODE=supabase \
+            --build-arg VITE_SUPABASE_URL="${{ vars.PRODUCTION_VITE_SUPABASE_URL }}" \
+            --build-arg VITE_SUPABASE_ANON_KEY="${{ vars.PRODUCTION_VITE_SUPABASE_ANON_KEY }}" \
+            --build-arg VITE_SENTRY_DSN="${{ vars.PRODUCTION_VITE_SENTRY_DSN }}" \
+            --build-arg VITE_APP_ENV=production \
+            -t ghcr.io/${IMAGE_NAMESPACE}/praevia-neuroimpact-frontend:${IMAGE_TAG} \
+            --push .
+
+      - name: Build and push backend
+        if: github.event_name == 'release' || inputs.image_tag == ''
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            -f backend/Dockerfile \
+            -t ghcr.io/${IMAGE_NAMESPACE}/praevia-neuroimpact-backend:${IMAGE_TAG} \
+            --push .
+
+      - name: Prepare deployment key and env
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.PRODUCTION_DEPLOY_SSH_KEY }}" > ~/.ssh/praevia_deploy_key
+          chmod 600 ~/.ssh/praevia_deploy_key
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/praevia_deploy_key
+          ssh-keyscan -p "${{ secrets.PRODUCTION_DEPLOY_PORT || 22 }}" "${{ secrets.PRODUCTION_DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          printf '%s' "${{ secrets.PRODUCTION_ENV_FILE }}" > /tmp/.env.production
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+
+      - name: Deploy production
+        env:
+          DEPLOY_ENV: production
+          DEPLOY_HOST: ${{ secrets.PRODUCTION_DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.PRODUCTION_DEPLOY_USER || 'deploy' }}
+          DEPLOY_PORT: ${{ secrets.PRODUCTION_DEPLOY_PORT || '22' }}
+          DEPLOY_ROOT: ${{ secrets.PRODUCTION_DEPLOY_ROOT || '/opt/praevia-neuroimpact/production' }}
+          ENV_FILE_SOURCE: /tmp/.env.production
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME || github.actor }}
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
+        run: scripts/deploy-remote-compose.sh
+
+      - name: Verify production URLs
+        env:
+          APP_SMOKE_URL: ${{ vars.PRODUCTION_APP_PUBLIC_URL }}
+          API_SMOKE_URL: ${{ vars.PRODUCTION_API_PUBLIC_URL }}
+          READINESS_TOKEN: ${{ secrets.PRODUCTION_READINESS_TOKEN }}
+        run: |
+          node scripts/smoke.mjs
+          node scripts/production-dependencies-gate.mjs

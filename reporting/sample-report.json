@@ -1,0 +1,77 @@
+{
+  "id": "report_sample_sprint9",
+  "organizationId": "org_demo",
+  "experimentId": "exp_demo",
+  "assetId": "asset_demo",
+  "analysisRunId": "run_demo",
+  "scoringResultId": "scoring_demo",
+  "assetName": "sprint9_demo_asset.txt",
+  "reportType": "creative",
+  "language": "es",
+  "status": "ready",
+  "title": "Informe creativo · sprint9_demo_asset.txt",
+  "decision": "Revisar montaje: reforzar Social Cueing y proteger el tramo 00:09-00:10.",
+  "tldr": "NRI 71 con confianza media. La fortaleza principal es Visual Salience (80) y el punto a corregir es Social Cueing (63).",
+  "guardrailStatus": "passed",
+  "guardrailFindings": [],
+  "usage": {
+    "provider": "local",
+    "draftModel": "local-draft-v0",
+    "finalModel": "gpt-5.5",
+    "reviewerModel": "claude-opus-4.7",
+    "promptVersion": "report-master-v0.1",
+    "inputTokens": 620,
+    "outputTokens": 980,
+    "estimatedCostEur": 0
+  },
+  "sections": [
+    {
+      "id": "section_1",
+      "sectionKey": "recommendations",
+      "title": "Recomendaciones priorizadas",
+      "body": "Aplicar primero las acciones con timecode.",
+      "orderIndex": 1,
+      "payload": {
+        "recommendations": [
+          { "timecode": "00:09-00:10", "layer": "ritmo", "action": "Usar este tramo como referencia de cierre o refuerzo.", "confidence": "media", "impact": "alto" },
+          { "timecode": "00:00-00:01", "layer": "montaje", "action": "Refuerza el primer plano, claim o entrada sonora en los 2 primeros segundos.", "confidence": "media", "impact": "medio" },
+          { "timecode": "global", "layer": "Social Cueing", "action": "Comparar contra benchmark interno antes de convertirlo en decision creativa.", "confidence": "media", "impact": "medio" }
+        ]
+      }
+    }
+  ],
+  "scoringSnapshot": {
+    "id": "scoring_demo",
+    "modelId": "facebook/tribev2",
+    "scoringVersion": "scoring-v0.1",
+    "confidenceLabel": "media",
+    "benchmarkLabel": "Demo baseline · sin benchmark cliente",
+    "boldDelaySeconds": 4.5,
+    "summary": {
+      "nri": 71,
+      "confidence": "media",
+      "benchmark": "Demo baseline",
+      "decision": "Resultado interno generado."
+    },
+    "editorialScores": [
+      { "metricKey": "nri", "metricLabel": "Neural Response Index", "score": 71, "confidence": 0.72, "benchmarkDelta": 11, "evidence": "Derivado de redes.", "action": "Comparar contra benchmark interno antes de decision final." },
+      { "metricKey": "visual_salience", "metricLabel": "Visual Salience", "score": 80, "confidence": 0.72, "benchmarkDelta": 20, "evidence": "Derivado de red visual.", "action": "Mantener la estructura visual fuerte." },
+      { "metricKey": "narrative_clarity", "metricLabel": "Narrative Clarity", "score": 73, "confidence": 0.72, "benchmarkDelta": 13, "evidence": "Derivado de lenguaje/control.", "action": "No sobrecargar el tramo medio." },
+      { "metricKey": "social_cueing", "metricLabel": "Social Cueing", "score": 63, "confidence": 0.72, "benchmarkDelta": 3, "evidence": "Proxy social.", "action": "Introducir rostro o gesto humano si el tramo queda plano." }
+    ],
+    "timecoursePoints": [
+      { "pointIndex": 0, "boldTimeSeconds": 0, "stimulusTimeSeconds": 0, "globalResponse": 0.34, "normalizedResponse": 34, "eventLabel": "valley" },
+      { "pointIndex": 1, "boldTimeSeconds": 1.49, "stimulusTimeSeconds": 0, "globalResponse": 0.47, "normalizedResponse": 47 },
+      { "pointIndex": 2, "boldTimeSeconds": 2.98, "stimulusTimeSeconds": 0, "globalResponse": 0.63, "normalizedResponse": 63 },
+      { "pointIndex": 3, "boldTimeSeconds": 4.47, "stimulusTimeSeconds": 0, "globalResponse": 0.78, "normalizedResponse": 78 },
+      { "pointIndex": 4, "boldTimeSeconds": 5.96, "stimulusTimeSeconds": 1.46, "globalResponse": 0.71, "normalizedResponse": 71 },
+      { "pointIndex": 5, "boldTimeSeconds": 7.45, "stimulusTimeSeconds": 2.95, "globalResponse": 0.59, "normalizedResponse": 59 },
+      { "pointIndex": 6, "boldTimeSeconds": 8.94, "stimulusTimeSeconds": 4.44, "globalResponse": 0.45, "normalizedResponse": 45 },
+      { "pointIndex": 7, "boldTimeSeconds": 10.43, "stimulusTimeSeconds": 5.93, "globalResponse": 0.52, "normalizedResponse": 52 },
+      { "pointIndex": 8, "boldTimeSeconds": 11.92, "stimulusTimeSeconds": 7.42, "globalResponse": 0.68, "normalizedResponse": 68 },
+      { "pointIndex": 9, "boldTimeSeconds": 13.41, "stimulusTimeSeconds": 8.91, "globalResponse": 0.84, "normalizedResponse": 84, "eventLabel": "peak" },
+      { "pointIndex": 10, "boldTimeSeconds": 14.9, "stimulusTimeSeconds": 10.4, "globalResponse": 0.62, "normalizedResponse": 62 },
+      { "pointIndex": 11, "boldTimeSeconds": 16.39, "stimulusTimeSeconds": 11.89, "globalResponse": 0.43, "normalizedResponse": 43 }
+    ]
+  }
+}

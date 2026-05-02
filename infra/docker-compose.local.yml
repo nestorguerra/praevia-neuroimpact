@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: neuroimpact-postgres
+    environment:
+      POSTGRES_USER: neuroimpact
+      POSTGRES_PASSWORD: neuroimpact
+      POSTGRES_DB: neuroimpact
+    ports:
+      - "5432:5432"
+    volumes:
+      - neuroimpact-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neuroimpact -d neuroimpact"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: neuroimpact-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: neuroimpact-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: local
+      MINIO_ROOT_PASSWORD: localpassword
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - neuroimpact-minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: neuroimpact-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 local localpassword;
+      mc mb -p local/neuroimpact-local;
+      mc anonymous set none local/neuroimpact-local;
+      exit 0;
+      "
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: neuroimpact-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  neuroimpact-postgres:
+  neuroimpact-minio:
