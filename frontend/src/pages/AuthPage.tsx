@@ -1,4 +1,4 @@
-import { ArrowLeft, KeyRound, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
+import { ArrowLeft, BrainCircuit, FileText, GitCompare, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { PraeviaLockup, PraeviaMark } from "../components/brand/PraeviaLogo";
 import { Button, Input, LinkButton } from "../components/ui";
@@ -126,9 +126,9 @@ export function AuthPage({ mode, navigate }: AuthPageProps) {
         <PraeviaMark size={54} />
         <h2>Decide que version usar. Antes de producir.</h2>
         <div className="auth-trust-grid">
-          <div><KeyRound size={18} /><strong>Supabase Auth</strong><span>Password login y recuperacion segura.</span></div>
-          <div><ShieldCheck size={18} /><strong>Organizaciones aisladas</strong><span>Membresias y roles con RLS.</span></div>
-          <div><LockKeyhole size={18} /><strong>MFA preparado</strong><span>Activable desde Supabase para cuentas enterprise.</span></div>
+          <div><BrainCircuit size={18} /><strong>NeuroAnalisis multimodal</strong><span>Analiza video, audio y texto para estimar respuesta neurocognitiva predicha.</span></div>
+          <div><GitCompare size={18} /><strong>Comparativa A/B/C con IA</strong><span>Ordena versiones, calcula deltas y propone master, tramos donantes y cortes.</span></div>
+          <div><FileText size={18} /><strong>Informes accionables GPT</strong><span>Convierte scores en decisiones, timecodes y recomendaciones listas para editar.</span></div>
         </div>
       </aside>
     </main>
