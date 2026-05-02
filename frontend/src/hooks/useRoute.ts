@@ -12,13 +12,18 @@ export function useRoute() {
       if (!anchor || anchor.target) return;
       const url = new URL(anchor.href, window.location.origin);
       if (url.origin !== window.location.origin) return;
+      if (url.hash && url.pathname === window.location.pathname && url.search === window.location.search) return;
       const nextPath = normalizeRoutePath(url.pathname);
       if (/\.[a-z0-9]+$/i.test(nextPath)) return;
       if (!["/", "/login", "/register", "/forgot", "/pilot-kit"].includes(nextPath) && !nextPath.startsWith("/app") && !nextPath.startsWith("/share/")) return;
       event.preventDefault();
-      window.history.pushState({}, "", `${url.pathname}${url.hash}`);
+      window.history.pushState({}, "", `${url.pathname}${url.search}${url.hash}`);
       setPath(nextPath);
-      window.scrollTo({ top: 0 });
+      if (url.hash) {
+        document.querySelector(url.hash)?.scrollIntoView({ block: "start" });
+      } else {
+        window.scrollTo({ top: 0 });
+      }
     };
     window.addEventListener("popstate", handlePopState);
     document.addEventListener("click", handleDocumentClick);

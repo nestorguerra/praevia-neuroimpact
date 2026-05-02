@@ -10,9 +10,14 @@ import { experimentTypeLabels, statusLabels } from "../projects/templates";
 import type { ExperimentType, ProjectStatus } from "../projects/types";
 import { useProjectStore } from "../projects/useProjectStore";
 
-export function WorkspacePage() {
+type WorkspacePageProps = {
+  active?: string;
+  initialShowWizard?: boolean;
+};
+
+export function WorkspacePage({ active = "workspace", initialShowWizard = false }: WorkspacePageProps) {
   const { session } = useAuth();
-  const [showWizard, setShowWizard] = useState(false);
+  const [showWizard, setShowWizard] = useState(initialShowWizard);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | ProjectStatus>("all");
   const [type, setType] = useState<"all" | ExperimentType>("all");
@@ -55,7 +60,7 @@ export function WorkspacePage() {
   ];
 
   return (
-    <AppShell active="workspace">
+    <AppShell active={active}>
       {showWizard ? (
         <ProjectWizard
           workspaces={state.workspaces}

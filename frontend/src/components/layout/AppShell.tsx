@@ -30,7 +30,7 @@ const navGroups = [
     title: "Principal",
     items: [
       { label: "Workspace", icon: BarChart3, key: "workspace", href: "/app" },
-      { label: "Nuevo analisis", icon: Plus, key: "new-analysis", href: "/app" },
+      { label: "Nuevo analisis", icon: Plus, key: "new-analysis", href: "/app/new-analysis" },
       { label: "Comparativas", icon: FolderKanban, key: "comparisons", href: "/app/compare" },
       { label: "Workflow", icon: MessagesSquare, key: "workflow", href: "/app/workflow" },
     ],
@@ -40,15 +40,15 @@ const navGroups = [
     items: [
       { label: "Benchmarks", icon: Gauge, key: "benchmarks", href: "/app/benchmarks" },
       { label: "Resultados", icon: LineChart, key: "results", href: "/app/results" },
-      { label: "Informes", icon: FileText, key: "reports", href: "/app" },
+      { label: "Informes", icon: FileText, key: "reports", href: "/app/reports" },
       { label: "Uploads", icon: FileUp, key: "uploads", href: "/app/upload" },
     ],
   },
   {
     title: "Cuenta",
     items: [
-      { label: "Equipo", icon: Users, key: "team", href: "/app" },
-      { label: "Organizacion", icon: Landmark, key: "organization", href: "/app" },
+      { label: "Equipo", icon: Users, key: "team", href: "/app/team" },
+      { label: "Organizacion", icon: Landmark, key: "organization", href: "/app/organization" },
       { label: "Admin", icon: ShieldCheck, key: "admin", href: "/app/admin" },
       { label: "SaaS v1.5", icon: BriefcaseBusiness, key: "enterprise", href: "/app/enterprise" },
       { label: "Ajustes", icon: Settings, key: "settings", href: "/app/settings" },
