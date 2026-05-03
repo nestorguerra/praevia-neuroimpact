@@ -67,8 +67,8 @@ export const trustItems = [
 
 export const plans = [
   {
-    code: "Sprint 10",
-    title: "Sprint 10",
+    code: "Piloto creativo",
+    title: "Piloto creativo",
     price: "12.000-20.000 EUR",
     items: ["10 piezas analizadas", "Ranking de versiones", "Informe ejecutivo", "Workshop de decision", "Recomendaciones por timecode"],
   },
@@ -110,4 +110,3 @@ export const governanceCards = [
     icon: Sparkles,
   },
 ];
-

@@ -99,7 +99,7 @@ function UploadPageContent({
     <AppShell active="uploads">
       <section className="upload-hero">
         <div>
-          <span className="workspace-eyebrow">Sprint 4 · Upload seguro</span>
+          <span className="workspace-eyebrow">Upload seguro</span>
           <h2>Sube assets reales y valida si estan listos para analisis.</h2>
           <p>La UI simula el flujo correcto de producto: upload firmado, hash, health check, previews y creditos antes de lanzar TRIBE.</p>
         </div>
@@ -126,7 +126,7 @@ function UploadPageContent({
           </label>
           <div className="upload-context-note">
             <FolderKanban size={16} />
-            {activeBundle ? `${activeBundle.workspace.name} -> ${activeBundle.project.brand} / ${activeBundle.project.campaign}` : "Crea un proyecto en Sprint 3 antes de subir assets."}
+            {activeBundle ? `${activeBundle.workspace.name} -> ${activeBundle.project.brand} / ${activeBundle.project.campaign}` : "Crea un proyecto antes de subir assets."}
           </div>
         </Card>
 

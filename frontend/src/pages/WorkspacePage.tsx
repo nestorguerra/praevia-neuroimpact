@@ -158,7 +158,7 @@ export function WorkspacePage({ active = "workspace", initialShowWizard = false 
           </Card>
 
           <Card eyebrow="Siguiente accion" title="Primer analisis">
-            <UploadRow name="spot_A_master.mp4" meta="Video · pendiente Sprint 4" status="warning" />
+            <UploadRow name="spot_A_master.mp4" meta="Video · pendiente de upload" status="warning" />
             <LinkButton href={selectedBundle ? `/app/upload?experimentId=${selectedBundle.experiment.id}` : "/app/upload"} icon={<UploadCloud size={15} />}>Preparar upload</LinkButton>
           </Card>
         </aside>
@@ -170,7 +170,7 @@ export function WorkspacePage({ active = "workspace", initialShowWizard = false 
             <span className="breadcrumbs">Preview / Resultados</span>
             <h2>Detalle preparado para upload y runs</h2>
           </div>
-          <Badge tone="muted">Sprint 3</Badge>
+          <Badge tone="muted">Workspace</Badge>
         </div>
         <section className="score-grid">
           <ScoreCard label="Neural Response Index" value={0.78} delta="+0.12 vs B" confidence="CONF 0.92" benchmark="BENCH +14%" />

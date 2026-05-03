@@ -37,7 +37,7 @@ export function TribeRunPanel({ preprocessingJobs, runs, isRunning, artifactCoun
     <section className="tribe-panel">
       <div className="tribe-head">
         <div>
-          <span className="workspace-eyebrow">Sprint 23 · Worker GPU TRIBE real</span>
+          <span className="workspace-eyebrow">Worker GPU TRIBE real</span>
           <h2>Prediccion cortical guardada como artefacto.</h2>
           <p>El worker recibe derivados reales, ejecuta TRIBE en GPU externa y guarda predicciones BOLD en fsaverage5.</p>
         </div>

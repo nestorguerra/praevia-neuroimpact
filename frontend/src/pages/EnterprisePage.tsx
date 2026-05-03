@@ -267,7 +267,7 @@ export function EnterprisePage() {
     <AppShell active="enterprise">
       <section className="enterprise-hero">
         <div>
-          <span className="workspace-eyebrow">Sprint 16 · SaaS v1.5 beta</span>
+          <span className="workspace-eyebrow">SaaS v1.5 beta</span>
           <h2>Listo para operar 3-5 pilotos sin pasarela de pago.</h2>
           <p>Planes, API keys, export mensual de uso, SSO bajo contrato, DPA, retencion, SLA y checklist procurement. Facturacion manual mientras el producto esta en beta.</p>
         </div>
@@ -340,7 +340,7 @@ export function EnterprisePage() {
             <div className="enterprise-panel-head">
               <div>
                 <span className="workspace-eyebrow">SSO</span>
-                <h3>Roadmap Enterprise.</h3>
+                <h3>SSO Enterprise.</h3>
               </div>
               <Badge tone={statusTone(store.ssoRoadmap.status)}>{store.ssoRoadmap.status}</Badge>
             </div>

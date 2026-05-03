@@ -91,7 +91,7 @@ export function WorkflowPage() {
   const [commentTimecode, setCommentTimecode] = useState("00:18-00:22");
   const [commentBody, setCommentBody] = useState("Recortar locucion y adelantar el refuerzo visual.");
   const [assignee, setAssignee] = useState("Edicion");
-  const [shareTitle, setShareTitle] = useState("Revision cliente · Sprint 10");
+  const [shareTitle, setShareTitle] = useState("Revision cliente · Piloto creativo");
   const [copied, setCopied] = useState(false);
   const [apiError, setApiError] = useState("");
   const [isLoadingApi, setIsLoadingApi] = useState(false);
@@ -215,7 +215,7 @@ export function WorkflowPage() {
     <AppShell active="workflow">
       <section className="workflow-hero">
         <div>
-          <span className="workspace-eyebrow">Sprint 14 · Workflow creativo</span>
+          <span className="workspace-eyebrow">Workflow creativo</span>
           <h2>Del informe a la ejecucion editorial.</h2>
           <p>{title} · comentarios por timecode, tareas asignables, estados y viewer externo solo lectura.</p>
         </div>

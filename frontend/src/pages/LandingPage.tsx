@@ -14,7 +14,7 @@ const initialDemoRequest: DemoRequestInput = {
   role: "",
   useCase: "",
   assetCount: "10-30 assets",
-  timeline: "Sprint 10",
+  timeline: "Piloto creativo",
   consent: false,
   source: "landing",
 };
@@ -73,7 +73,7 @@ export function LandingPage() {
             decisiones editoriales con timecode, confianza y benchmark.
           </p>
           <div className="hero-actions">
-            <LinkButton href="#pilotos" size="lg" icon={<ArrowRight size={18} />}>Programar Sprint 10</LinkButton>
+            <LinkButton href="#pilotos" size="lg" icon={<ArrowRight size={18} />}>Solicitar piloto</LinkButton>
             <LinkButton href="/register" variant="secondary" size="lg">Crear workspace</LinkButton>
           </div>
         </div>
@@ -250,7 +250,7 @@ export function LandingPage() {
         <div className="section-heading">
           <span>06 · Kit</span>
           <div>
-            <h2>Todo lo necesario para vender el primer <em>Sprint 10</em>.</h2>
+            <h2>Todo lo necesario para vender el primer <em>piloto creativo</em>.</h2>
             <p>
               Landing, deck, teaser, demos, one-pager, ficha de seguridad y propuesta comercial quedan unidos en un
               recorrido de reunion.
@@ -282,7 +282,7 @@ export function LandingPage() {
       <section id="contacto" className="final-cta">
         <PraeviaMark size={44} />
         <h2>Prepara una demo con piezas reales.</h2>
-        <p>Deja empresa, caso de uso y numero aproximado de assets. El siguiente paso es montar el primer Sprint 10.</p>
+        <p>Deja empresa, caso de uso y numero aproximado de assets. El siguiente paso es preparar una demo confidencial con piezas reales.</p>
         <form className="contact-form" onSubmit={handleSubmit}>
           <Input label="Nombre" placeholder="Nestor Guerra" value={form.name} onChange={(event) => updateField("name", event.target.value)} />
           <Input label="Email corporativo" placeholder="nombre@empresa.com" type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} />
@@ -290,7 +290,7 @@ export function LandingPage() {
           <Input label="Rol" placeholder="CMO, Head of Content, Agencia..." value={form.role} onChange={(event) => updateField("role", event.target.value)} />
           <Input label="Caso de uso" placeholder="Spot A/B/C, evento, guion, branded content..." value={form.useCase} onChange={(event) => updateField("useCase", event.target.value)} />
           <Input label="Numero de piezas" placeholder="10-30 assets" value={form.assetCount} onChange={(event) => updateField("assetCount", event.target.value)} />
-          <Input label="Oferta de interes" placeholder="Sprint 10 / Piloto corporativo / SaaS Professional" value={form.timeline} onChange={(event) => updateField("timeline", event.target.value)} />
+          <Input label="Oferta de interes" placeholder="Piloto creativo / Piloto corporativo / SaaS Professional" value={form.timeline} onChange={(event) => updateField("timeline", event.target.value)} />
           <label className="field checkbox-field">
             <input type="checkbox" checked={form.consent} onChange={(event) => updateField("consent", event.target.checked)} />
             <span>Autorizo el contacto para preparar una demo confidencial del piloto.</span>

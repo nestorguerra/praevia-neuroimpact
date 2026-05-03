@@ -103,7 +103,7 @@ export function createWorkspace(state: ProjectStoreState, organizationId: string
     organizationId,
     name,
     clientName: name.split("/")[0]?.trim() || name,
-    description: "Workspace creado desde Sprint 3.",
+    description: "Workspace creado desde el producto.",
     createdAt,
     updatedAt: createdAt,
   };
@@ -149,7 +149,7 @@ export function createProjectBundle(state: ProjectStoreState, organizationId: st
     name: template?.label ?? experimentTypeLabels[input.experimentType],
     template: input.template,
     assetSlots: experimentAssetSlots[input.experimentType],
-    notes: "Creado desde wizard Sprint 3.",
+    notes: "Creado desde wizard de proyecto.",
     createdAt,
     updatedAt: createdAt,
   };

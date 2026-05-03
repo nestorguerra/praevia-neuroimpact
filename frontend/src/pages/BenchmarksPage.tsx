@@ -250,7 +250,7 @@ export function BenchmarksPage() {
           unit: "%",
           source: kpiSource,
           period: "Q2",
-          notes: "Import manual Sprint 21 via API.",
+          notes: "Import manual via API.",
         }, accessToken));
       } catch (caught) {
         setApiError(caught instanceof Error ? caught.message : "No se pudo importar KPI en API.");
@@ -267,7 +267,7 @@ export function BenchmarksPage() {
       unit: "%",
       source: kpiSource,
       period: "Q2",
-      notes: "Import manual Sprint 15.",
+      notes: "Import manual.",
     }));
   }
 
@@ -275,7 +275,7 @@ export function BenchmarksPage() {
     <AppShell active="benchmarks">
       <section className="benchmark-hero">
         <div>
-          <span className="workspace-eyebrow">Sprint 15 · Benchmarks y KPIs</span>
+          <span className="workspace-eyebrow">Benchmarks y KPIs</span>
           <h2>El moat empieza cuando el cliente compara contra su propio historico.</h2>
           <p>{selectedBundle ? `${selectedBundle.project.brand} / ${selectedBundle.project.campaign}` : "Benchmark privado por categoria, percentiles e import manual de KPIs reales."}</p>
         </div>
@@ -360,7 +360,7 @@ export function BenchmarksPage() {
               <Input label="Fuente" value={kpiSource} onChange={(event) => setKpiSource(event.target.value)} />
               <Button icon={<TrendingUp size={15} />}>Importar KPI</Button>
             </form>
-            <p className="benchmark-note">Demo Sprint 15: asigna la pieza nueva y registra VTR real manual para empezar a calibrar.</p>
+            <p className="benchmark-note">Demo de benchmark: asigna la pieza nueva y registra VTR real manual para empezar a calibrar.</p>
           </section>
 
           <CorrelationChart store={store} benchmarkId={benchmarkId} kpiType={kpiType} />

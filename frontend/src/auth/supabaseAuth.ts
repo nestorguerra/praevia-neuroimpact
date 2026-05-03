@@ -24,7 +24,7 @@ function initialsFromName(nameOrEmail: string) {
 
 function normalizePlan(value?: string): PraeviaOrganization["plan"] {
   if (value === "Piloto corporativo" || value === "Professional" || value === "Enterprise") return value;
-  return "Sprint 10";
+  return "Piloto creativo";
 }
 
 function normalizeStatus(value?: string): PraeviaOrganization["status"] {

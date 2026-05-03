@@ -69,13 +69,13 @@ export const demoScenarios = [
 
 export const meetingFlow = [
   "Abrir landing y explicar la promesa: decidir version antes de producir.",
-  "Mostrar deck cliente: problema, tesis, producto y oferta Sprint 10.",
+  "Mostrar deck cliente: problema, tesis, producto y oferta de piloto creativo.",
   "Entrar en la app, abrir comparativa A/B/C y ensenar decision recomendada.",
   "Descargar PDF de ejemplo y explicar limites metodologicos con lenguaje sobrio.",
   "Cerrar con alcance: 10 piezas, informe, workshop y reanalisis opcional.",
 ];
 
-export const sprint10Offer = {
+export const pilotOffer = {
   price: "12.000-20.000 EUR",
   duration: "10 dias habiles",
   scope: ["10 piezas o variantes", "1 comparativa A/B/C principal", "PDF ejecutivo", "Workshop de decision", "Recomendaciones por timecode"],

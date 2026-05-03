@@ -54,7 +54,7 @@ export function ScoringPanel({ runs, results, isScoring, scoreCount, onStart }: 
     <section className="scoring-panel">
       <div className="scoring-head">
         <div>
-          <span className="workspace-eyebrow">Sprint 24 · Scoring real</span>
+          <span className="workspace-eyebrow">Scoring real</span>
           <h2>Scores calculados desde predicciones TRIBE.</h2>
           <p>Convierte `bold_predictions.npz` en indices 0-100 con confianza, benchmark, evidencia, timeline y accion por timecode.</p>
         </div>

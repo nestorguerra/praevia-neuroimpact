@@ -136,7 +136,7 @@ export async function createProjectBundleInApi(organizationId: string, accessTok
         organization_id: organizationId,
         name: workspaceName,
         client_name: workspaceName.split("/")[0]?.trim() || workspaceName,
-        description: "Workspace creado desde Sprint 19 DB.",
+        description: "Workspace creado desde la app.",
       }),
     });
     workspace = workspaceFromApi(created);
@@ -170,7 +170,7 @@ export async function createProjectBundleInApi(organizationId: string, accessTok
       name: template?.label ?? experimentTypeLabels[input.experimentType],
       template: input.template,
       asset_slots: experimentAssetSlots[input.experimentType],
-      notes: "Creado desde wizard Sprint 19 DB.",
+      notes: "Creado desde wizard de proyecto.",
     }),
   }));
 

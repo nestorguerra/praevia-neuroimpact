@@ -43,7 +43,7 @@ export function ProjectDetail({ bundle }: ProjectDetailProps) {
         <div><CalendarDays size={16} /><span>KPI esperado</span><strong>{bundle.project.expectedKpi}</strong></div>
       </div>
       <LinkButton href={`/app/upload?experimentId=${bundle.experiment.id}`}>Ir a upload</LinkButton>
-      <p className="detail-note">Sprint 4 conectara esta accion con storage y Asset Health Check real.</p>
+      <p className="detail-note">Esta accion abre storage y Asset Health Check para preparar el analisis.</p>
     </aside>
   );
 }

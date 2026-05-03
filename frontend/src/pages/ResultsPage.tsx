@@ -475,7 +475,7 @@ function ReportExportPanel({
   return (
     <section className="report-export-panel">
       <div>
-        <span className="workspace-eyebrow">Sprint 9 · LLM + PDF</span>
+        <span className="workspace-eyebrow">LLM + PDF</span>
         <h3>Informe ejecutivo/creativo con lenguaje controlado.</h3>
         <p>Genera interpretacion estructurada, aplica guardrails de claims y descarga PDF, HTML print-first o JSON trazable.</p>
       </div>
@@ -624,7 +624,7 @@ export function ResultsPage() {
     <AppShell active="results">
       <section className="results-hero">
         <div>
-          <span className="workspace-eyebrow">Sprint 9 · Dashboard + informes</span>
+          <span className="workspace-eyebrow">Dashboard + informes</span>
           <h2>Empieza por la decision. Termina en informe.</h2>
           <p>{activeBundle ? `${activeBundle.project.brand} / ${activeBundle.project.campaign} · ${activeBundle.experiment.name}` : "Selecciona un experimento con scoring para abrir resultados accionables."}</p>
         </div>
@@ -726,7 +726,7 @@ export function ResultsPage() {
 
           <section className="result-footer-note">
             <MousePointer2 size={15} />
-            <span>Dashboard Sprint 9: decision, timeline, modalidades, recomendaciones, guardrails e informe PDF/HTML/JSON.</span>
+            <span>Dashboard de resultados: decision, timeline, modalidades, recomendaciones, guardrails e informe PDF/HTML/JSON.</span>
           </section>
         </>
       )}

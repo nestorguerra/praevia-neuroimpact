@@ -292,7 +292,7 @@ export function ComparisonPage() {
     <AppShell active="comparisons">
       <section className="comparison-hero">
         <div>
-          <span className="workspace-eyebrow">Sprint 27 · Comparativa A/B/C real</span>
+          <span className="workspace-eyebrow">Comparativa A/B/C real</span>
           <h2>Elige master. Roba los mejores tramos. Recorta el valle.</h2>
           <p>{activeBundle ? `${activeBundle.project.brand} / ${activeBundle.project.campaign} · ${activeBundle.experiment.name}` : "Caso estrella comercial: ranking, timeline comparado y mix recomendado."}</p>
         </div>

@@ -1,7 +1,7 @@
 import { ArrowRight, Download, ExternalLink, FileText, PlayCircle, Presentation, ShieldCheck } from "lucide-react";
 import { PraeviaLockup, PraeviaMark } from "../components/brand/PraeviaLogo";
 import { Badge, LinkButton } from "../components/ui";
-import { commercialAssets, demoScenarios, meetingFlow, sprint10Offer } from "../data/pilotKit";
+import { commercialAssets, demoScenarios, meetingFlow, pilotOffer } from "../data/pilotKit";
 import { publicHref } from "../routing/paths";
 
 export function PilotKitPage() {
@@ -14,7 +14,7 @@ export function PilotKitPage() {
         <nav aria-label="Kit comercial">
           <a href="#activos">Activos</a>
           <a href="#demos">Demos</a>
-          <a href="#oferta">Sprint 10</a>
+          <a href="#oferta">Piloto</a>
           <a href={publicHref("/")}>Landing</a>
         </nav>
         <div className="nav-actions">
@@ -24,11 +24,11 @@ export function PilotKitPage() {
 
       <section className="pilot-hero">
         <div>
-          <span className="hero-kicker">Kit comercial · v1.0 Pilot-Ready</span>
+          <span className="hero-kicker">Kit comercial · NeuroImpact Analyzer</span>
           <h1>Una reunion. Una demo. Una propuesta cerrada.</h1>
           <p>
             Este kit convierte NeuroImpact Analyzer en una oferta vendible: narrativa, demo real, informe, seguridad,
-            alcance Sprint 10 y materiales exportables para cerrar un piloto.
+            alcance de piloto creativo y materiales exportables para cerrar una prueba con cliente.
           </p>
           <div className="hero-actions">
             <LinkButton href="#activos" size="lg" icon={<ArrowRight size={18} />}>Recorrido de reunion</LinkButton>
@@ -37,7 +37,7 @@ export function PilotKitPage() {
         </div>
         <div className="pilot-command-panel">
           <div className="instrument-header">
-            <span>SPRINT_13 · COMMERCIAL KIT</span>
+            <span>PILOT_KIT · COMMERCIAL</span>
             <span>READY</span>
           </div>
           <div className="pilot-step-list">
@@ -102,7 +102,7 @@ export function PilotKitPage() {
       <section id="oferta" className="section-block offer-section">
         <div>
           <span className="section-label">03 · Oferta</span>
-          <h2>Sprint 10: piloto corto, premium y acotado.</h2>
+          <h2>Piloto creativo: corto, premium y acotado.</h2>
           <p>
             El objetivo comercial no es vender una suscripcion barata. Es demostrar decision creativa con piezas reales,
             informe ejecutivo y workshop.
@@ -110,16 +110,16 @@ export function PilotKitPage() {
         </div>
         <div className="offer-card">
           <PraeviaMark size={36} />
-          <strong>{sprint10Offer.price}</strong>
-          <span>{sprint10Offer.duration}</span>
+          <strong>{pilotOffer.price}</strong>
+          <span>{pilotOffer.duration}</span>
           <div className="offer-columns">
             <div>
               <h3>Incluye</h3>
-              {sprint10Offer.scope.map((item) => <p key={item}>{item}</p>)}
+              {pilotOffer.scope.map((item) => <p key={item}>{item}</p>)}
             </div>
             <div>
               <h3>No incluye</h3>
-              {sprint10Offer.exclusions.map((item) => <p key={item}>{item}</p>)}
+              {pilotOffer.exclusions.map((item) => <p key={item}>{item}</p>)}
             </div>
           </div>
           <LinkButton href="/pilot-kit/pilot-contract-template.html" icon={<ShieldCheck size={15} />}>Ver contrato piloto</LinkButton>
@@ -129,7 +129,7 @@ export function PilotKitPage() {
       <section className="final-cta">
         <PlayCircle size={42} />
         <h2>Gate comercial preparado.</h2>
-        <p>La reunion puede arrancar en landing, pasar por deck, demo, PDF y cerrar con propuesta Sprint 10.</p>
+        <p>La reunion puede arrancar en landing, pasar por deck, demo, PDF y cerrar con propuesta de piloto.</p>
       </section>
     </main>
   );

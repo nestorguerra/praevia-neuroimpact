@@ -42,7 +42,7 @@ export function buildScoringResult(run: AnalysisRun): NeuroScoringResult {
   const base = 61 + seed;
   const networkScores: NetworkScore[] = [
     { networkKey: "visual", networkLabel: "Visual salience network", score: clip(base + 9), confidence: confidence.value, evidence: "Respuesta visual proxy desde vertices fsaverage5." },
-    { networkKey: "auditory", networkLabel: "Auditory processing network", score: clip(base - 3), confidence: confidence.value, evidence: "Audio extraido en Sprint 5; pendiente validacion ffprobe real." },
+    { networkKey: "auditory", networkLabel: "Auditory processing network", score: clip(base - 3), confidence: confidence.value, evidence: "Audio extraido en preprocesamiento; pendiente validacion ffprobe real." },
     { networkKey: "language", networkLabel: "Language and semantic network", score: clip(base + 1), confidence: confidence.value - 0.04, evidence: "Transcript disponible como derivado; Whisper local en worker CPU." },
     { networkKey: "social", networkLabel: "Social cognition network", score: clip(base - 8), confidence: confidence.value - 0.08, evidence: "Senales sociales aproximadas; sin detector visual dedicado aun." },
     { networkKey: "control", networkLabel: "Executive control network", score: clip(base + 3), confidence: confidence.value - 0.02, evidence: "Patron temporal estable en control narrativo." },

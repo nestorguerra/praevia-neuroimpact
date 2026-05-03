@@ -513,7 +513,7 @@ export function AdminPage() {
     <AppShell active="admin">
       <section className="admin-hero">
         <div>
-          <span className="workspace-eyebrow">Sprint 29 · Observabilidad y seguridad</span>
+          <span className="workspace-eyebrow">Observabilidad y seguridad</span>
           <h2>Opera sin ir a ciegas.</h2>
           <p>Vista operativa para coste, creditos, errores accionables, audit logs, backups, rate limits, borrado seguro y continuidad de analisis.</p>
         </div>

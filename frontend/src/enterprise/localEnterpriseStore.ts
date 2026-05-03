@@ -105,7 +105,7 @@ function defaultProcurementChecklist(): ProcurementChecklistItem[] {
     { id: "dpa", label: "DPA basico", status: "ready", evidence: "Plantilla lista para revision legal y firma en piloto." },
     { id: "retention", label: "Politica de retencion", status: "ready", evidence: "Retencion configurable por organizacion y borrado seguro trazado." },
     { id: "incident", label: "Incident response", status: "ready", evidence: "Playbook con primera respuesta 24h en beta." },
-    { id: "sso", label: "SSO/SAML", status: "contractual", evidence: "Roadmap y requisitos listos; activacion bajo plan Enterprise." },
+    { id: "sso", label: "SSO/SAML", status: "contractual", evidence: "Plan y requisitos listos; activacion bajo plan Enterprise." },
     { id: "billing", label: "Facturacion", status: "ready", evidence: "Export mensual de uso; sin pasarela de pago en beta." },
     { id: "api", label: "API keys", status: "ready", evidence: "Scopes basicos por organizacion y rotacion/revocacion." },
     { id: "hosting", label: "Hosting UE", status: "contractual", evidence: "Parametro de despliegue y anexo de proveedor segun cliente." },

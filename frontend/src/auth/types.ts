@@ -12,7 +12,7 @@ export type PraeviaOrganization = {
   name: string;
   slug: string;
   credits: number;
-  plan: "Sprint 10" | "Piloto corporativo" | "Professional" | "Enterprise";
+  plan: "Piloto creativo" | "Piloto corporativo" | "Professional" | "Enterprise";
   status: "Activo" | "Piloto" | "Demo";
 };
 

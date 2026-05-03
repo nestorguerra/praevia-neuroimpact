@@ -58,7 +58,7 @@ export function PreprocessingPanel({ assets, jobs, isRunning, derivativeCount, o
     <section className="preprocessing-panel">
       <div className="preprocessing-head">
         <div>
-          <span className="workspace-eyebrow">Sprint 5 · Preprocesamiento multimodal</span>
+          <span className="workspace-eyebrow">Preprocesamiento multimodal</span>
           <h2>Inputs normalizados para TRIBE.</h2>
           <p>Convierte cada asset en derivados internos: metadata, media normalizada, audio, transcript, silencios y texto temporizado.</p>
         </div>
