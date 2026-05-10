@@ -30,16 +30,16 @@ async function main() {
   await page.getByRole("button", { name: "Aprobar" }).first().click();
   await page.getByRole("button", { name: "Crear share link" }).click();
   await page.getByText(/client_viewer/).waitFor({ timeout: 5000 });
-  const workflowScreenshot = join(outDir, "sprint14-workflow.png");
+  const workflowScreenshot = join(outDir, "workflow.png");
   await page.screenshot({ path: workflowScreenshot, fullPage: true });
 
   const shareHref = await page.getByRole("link", { name: "Abrir viewer" }).getAttribute("href");
   if (!shareHref) throw new Error("Share viewer link was not created.");
   await page.goto(`${baseUrl}${shareHref}`, { waitUntil: "networkidle" });
-  await page.getByRole("heading", { name: "Revision cliente · Sprint 10" }).waitFor();
+  await page.getByRole("heading", { name: "Revision cliente · Piloto creativo" }).waitFor();
   const taskCount = await page.locator(".share-panel .share-row").count();
   if (taskCount < 4) throw new Error(`Expected shared tasks/comments, got ${taskCount} rows.`);
-  const viewerScreenshot = join(outDir, "sprint14-share-viewer.png");
+  const viewerScreenshot = join(outDir, "share-viewer.png");
   await page.screenshot({ path: viewerScreenshot, fullPage: true });
 
   const manifest = {
@@ -49,7 +49,7 @@ async function main() {
     taskCount,
     screenshots: [workflowScreenshot, viewerScreenshot],
   };
-  const manifestPath = join(outDir, "sprint14-workflow-gate.json");
+  const manifestPath = join(outDir, "workflow-gate.json");
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
   await browser.close();
   console.log(JSON.stringify({ ok: true, manifestPath, ...manifest }, null, 2));

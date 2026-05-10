@@ -58,7 +58,7 @@ async function main() {
   await page.getByLabel("Rol").fill("CMO");
   await page.getByLabel("Caso de uso").fill("Spot A/B/C para lanzamiento Q2");
   await page.getByLabel("Numero de piezas").fill("10 assets");
-  await page.getByLabel("Oferta de interes").fill("Sprint 10");
+  await page.getByLabel("Oferta de interes").fill("Piloto creativo");
   await page.getByLabel("Autorizo el contacto para preparar una demo confidencial del piloto.").check();
   await page.getByRole("button", { name: /Solicitar demo confidencial|Registrando solicitud/ }).click();
   await page.getByText(/Demo registrada|Demo guardada localmente/).waitFor({ timeout: 5000 });

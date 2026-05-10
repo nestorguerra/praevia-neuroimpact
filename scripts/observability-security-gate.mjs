@@ -78,7 +78,7 @@ const checks = [
   ["admin_records_cost_alerts", has("backend/app/repositories/admin_db.py", /_maybe_record_cost_alert/, /source = 'cost'|source, severity, message/, /Cost alert threshold reached/)],
   ["migration_indexes_observability_tables", has("backend/supabase/migrations/0021_observability_security.sql", /error_events_org_unresolved_idx/, /rate_limit_events_route_blocked_idx/, /backup_snapshots_org_type_created_idx/, /audit_logs_action_created_idx/)],
   ["frontend_initializes_sentry", has("frontend/src/observability/sentry.ts", /Sentry\.init/, /VITE_SENTRY_DSN/, /sendDefaultPii: false/) && has("frontend/src/main.tsx", /initFrontendObservability/, /ErrorBoundary/)],
-  ["frontend_admin_displays_observability", has("frontend/src/pages/AdminPage.tsx", /ObservabilityPanel/, /BackupPanel/, /Sprint 29/) && has("frontend/src/admin/apiAdminStore.ts", /error_events/, /backup_snapshots/)],
+  ["frontend_admin_displays_observability", has("frontend/src/pages/AdminPage.tsx", /ObservabilityPanel/, /BackupPanel/, /Observabilidad y seguridad/) && has("frontend/src/admin/apiAdminStore.ts", /error_events/, /backup_snapshots/)],
   ["env_templates_include_observability", [".env.example", "infra/env/local.example.env", "infra/env/staging.example.env", "infra/env/production.example.env"].every((file) => envHasAll(file, observabilityKeys))],
   ["production_cors_not_wildcard", !/^CORS_ALLOWED_ORIGINS=\*/m.test(productionEnv)],
   ["frontend_does_not_expose_backend_secrets", !frontendHasForbiddenSecret()],

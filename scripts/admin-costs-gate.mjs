@@ -25,7 +25,7 @@ const checks = [
   ["settings_expose_cost_rates", has("backend/app/settings.py", /storage_eur_per_gb_month/, /platform_event_eur/)],
   ["migration_adds_org_limit_columns", has("backend/supabase/migrations/0020_admin_costs_credits_real.sql", /monthly_cost_limit_eur/, /monthly_gpu_seconds_limit/, /usage_events_org_type_month_idx/, /storage_objects_org_active_bytes_idx/)],
   ["frontend_maps_admin_limits", has("frontend/src/admin/apiAdminStore.ts", /ApiAdminLimits/, /credits_allocated/, /total_cost_eur/, /createMonthlyUsageExportInApi/, /monthly_exports/)],
-  ["frontend_displays_admin_cost_controls", has("frontend/src/pages/AdminPage.tsx", /Sprint 2[89]/, /Export mensual/, /Puede analizar/, /Facturacion manual/, /monthlyExports/)],
+  ["frontend_displays_admin_cost_controls", has("frontend/src/pages/AdminPage.tsx", /Observabilidad y seguridad/, /Export mensual/, /Puede analizar/, /Facturacion manual/, /monthlyExports/)],
   ["env_examples_include_cost_rates", has(".env.example", /STORAGE_EUR_PER_GB_MONTH/, /PLATFORM_EVENT_EUR/) && has("infra/env/production.example.env", /STORAGE_EUR_PER_GB_MONTH/, /PLATFORM_EVENT_EUR/)],
 ];
 

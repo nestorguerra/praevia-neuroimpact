@@ -84,7 +84,7 @@ const checks = [
   ["backend_records_comparison_usage", has("backend/app/repositories/comparison_db.py", /usage_events/, /comparison_generation/, /credits_delta/, /COMPARISON_ALGORITHM_VERSION/)],
   ["migration_adds_comparison_trace_indexes", has("backend/supabase/migrations/0019_real_comparison_traceability.sql", /comparison_runs_report_payload_algorithm_idx/, /comparison_items_scoring_result_idx/, /comparison_timepoint_deltas_winner_idx/)],
   ["frontend_maps_real_fields", has("frontend/src/comparison/apiComparisonStore.ts", /pipeline_mode/, /run_status/, /winner_by_modality/, /report_payload/, /margin/)],
-  ["frontend_displays_real_origin", has("frontend/src/pages/ComparisonPage.tsx", /Sprint 27/, /Comparativa A\/B\/C real/, /reportPayload\.source/, /pipelineMode/)],
+  ["frontend_displays_real_origin", has("frontend/src/pages/ComparisonPage.tsx", /Comparativa A\/B\/C real/, /reportPayload\.source/, /pipelineMode/)],
   ["runtime_build_comparison_check", runtimeCheck.ok],
 ];
 

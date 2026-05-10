@@ -268,7 +268,7 @@ export function SettingsPage() {
                 autoComplete="off"
                 value={settings.tribe.hfToken}
                 placeholder="hf_..."
-                help="En produccion debe estar en Google Secret Manager como HF_TOKEN."
+                help="En produccion debe estar en Google Secret Manager como token de Hugging Face."
                 onChange={(event) => patchTribe({ hfToken: event.target.value })}
               />
               <Input
