@@ -52,15 +52,19 @@ const envFiles = [
   "infra/env/production.example.env",
 ];
 
+const dockerfile = read("worker/tribe/Dockerfile");
+
 const checks = [
-  ["backend_settings_runpod", has("backend/app/settings.py", /RUNPOD_API_KEY/, /TRIBE_CALLBACK_SECRET/, /TRIBE_RUN_TIMEOUT_SECONDS/, /TRIBE_GPU_EUR_PER_SECOND/)],
+  ["backend_settings_gpu_provider", has("backend/app/settings.py", /gpu_provider=/, /gcp_project_id=/, /TRIBE_CALLBACK_SECRET/, /TRIBE_RUN_TIMEOUT_SECONDS/, /TRIBE_GPU_EUR_PER_SECOND/)],
+  ["google_cloud_tasks_contract", has("backend/app/services/google_cloud_tasks_client.py", /class GoogleCloudTasksClient/, /cloudtasks\.googleapis\.com/, /oidcToken/, /X-TRIBE-WORKER-SECRET/)],
   ["runpod_client_contract", has("backend/app/services/runpod_client.py", /class RunPodClient/, /_endpoint_url\("run"\)/, /_endpoint_url\(f"status\/\{job_id\}"\)/, /Authorization/)],
-  ["inference_db_remote_mode", has("backend/app/repositories/inference_db.py", /settings\.tribe_worker_mode == "remote_gpu"/, /runpod_client\.enqueue/, /provider_job_id/, /_assert_gpu_caps/, /usage_events/)],
+  ["inference_db_remote_mode", has("backend/app/repositories/inference_db.py", /settings\.tribe_worker_mode == "remote_gpu"/, /gpu_worker_client\.enqueue/, /provider_job_id/, /_assert_gpu_caps/, /usage_events/)],
   ["callback_route_secured", has("backend/app/routes/tribe_internal.py", /X-TRIBE-CALLBACK-SECRET|x_tribe_callback_secret/, /hmac\.compare_digest/, /apply_callback/)],
   ["migration_remote_worker", has("backend/supabase/migrations/0017_tribe_remote_worker.sql", /provider_job_id/, /callback_received_at/, /sha256/, /analysis_runs_provider_job_idx/)],
+  ["worker_http_cloud_run", has("worker/tribe/tribe_worker/http_server.py", /FastAPI/, /\/run/, /X-TRIBE-WORKER-SECRET|x_tribe_worker_secret/, /handler/)],
   ["worker_handler_runpod", has("worker/tribe/tribe_worker/handler.py", /runpod\.serverless\.start/, /download_s3_object/, /upload_s3_object/, /TRIBE_CALLBACK_SECRET/, /bold_predictions\.npz/)],
   ["worker_uses_demo_utils_import", has("worker/tribe/tribe_worker/runner.py", /tribev2\.demo_utils import TribeModel/, /EXPECTED_VERTICES = 20484/)],
-  ["worker_docker_serverless", has("worker/tribe/Dockerfile", /pytorch\/pytorch/, /cuda/, /storage_client\.py/, /tribe_worker\.handler/) && !read("worker/tribe/Dockerfile").includes("ENTRYPOINT [\"python\", \"-m\", \"tribe_worker.cli\"]")],
+  ["worker_docker_gpu_runtime", /pytorch\/pytorch/.test(dockerfile) && /cuda/.test(dockerfile) && /storage_client\.py/.test(dockerfile) && /tribe_worker\.entrypoint/.test(dockerfile) && !dockerfile.includes("ENTRYPOINT [\"python\", \"-m\", \"tribe_worker.cli\"]")],
   ["worker_requirements_runpod", has("worker/tribe/requirements.txt", /runpod/, /huggingface_hub/, /nilearn/)],
   ["frontend_polls_runs", has("frontend/src/inference/apiInferenceStore.ts", /waitForRun/, /\/v1\/analysis-runs\/\$\{runId\}/, /Promise\.all/)],
   ["env_examples_remote_gpu", envFiles.every((file) => has(file, /RUNPOD_API_KEY|GPU_PROVIDER_API_KEY/, /TRIBE_CALLBACK_SECRET/, /TRIBE_RUN_TIMEOUT_SECONDS/))],
