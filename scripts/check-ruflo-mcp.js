@@ -1,9 +1,20 @@
 #!/usr/bin/env node
 
 const { spawn } = require("child_process");
+const { existsSync } = require("fs");
 
 const command = process.env.RUFLO_MCP_COMMAND || "/Applications/Codex.app/Contents/bin/claude-flow-mcp";
 const timeoutMs = Number(process.env.RUFLO_MCP_TIMEOUT_MS || 8000);
+
+if (process.env.CI === "true" && command.startsWith("/") && !existsSync(command)) {
+  console.log(JSON.stringify({
+    ok: true,
+    skipped: true,
+    reason: "Ruflo MCP es una herramienta local de Codex y no esta instalada en GitHub Actions.",
+    command,
+  }, null, 2));
+  process.exit(0);
+}
 
 let nextId = 1;
 let buffer = "";
@@ -73,4 +84,3 @@ send("initialize", {
     version: "0.1.0",
   },
 });
-
