@@ -37,11 +37,11 @@ jobs:
       - name: Build static demo
         working-directory: frontend
         env:
-          VITE_AUTH_MODE: local
+          VITE_AUTH_MODE: api
+          VITE_API_PUBLIC_URL: ${{ vars.PRODUCTION_VITE_API_PUBLIC_URL }}
           VITE_APP_ENV: production
           VITE_EMPTY_CLIENT: "true"
           VITE_DEMO_LOGIN_EMAIL: ${{ vars.DEMO_LOGIN_EMAIL }}
-          VITE_DEMO_LOGIN_PASSWORD: ${{ secrets.DEMO_LOGIN_PASSWORD }}
           VITE_DEMO_USER_NAME: ${{ vars.DEMO_USER_NAME }}
           VITE_DEMO_ORGANIZATION_NAME: ${{ vars.DEMO_ORGANIZATION_NAME }}
         run: |

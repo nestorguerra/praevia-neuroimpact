@@ -16,7 +16,7 @@ export function AuthPage({ mode, navigate }: AuthPageProps) {
   const { authMode, error, isLoading, login, recoverPassword, register } = useAuth();
   const [name, setName] = useState((import.meta.env.VITE_DEMO_USER_NAME as string | undefined) || "Nestor Guerra");
   const [email, setEmail] = useState((import.meta.env.VITE_DEMO_LOGIN_EMAIL as string | undefined) || "nestor@praevia.ai");
-  const [password, setPassword] = useState((import.meta.env.VITE_DEMO_LOGIN_PASSWORD as string | undefined) || "");
+  const [password, setPassword] = useState("");
   const [organizationName, setOrganizationName] = useState((import.meta.env.VITE_DEMO_ORGANIZATION_NAME as string | undefined) || "PraevIA Demo");
   const [sentRecovery, setSentRecovery] = useState(false);
   const [pendingConfirmation, setPendingConfirmation] = useState(false);
@@ -82,8 +82,12 @@ export function AuthPage({ mode, navigate }: AuthPageProps) {
               value={password}
               minLength={8}
               autoComplete={isRegister ? "new-password" : "current-password"}
-              required={authMode === "supabase"}
-              help={authMode === "supabase" ? "Minimo 8 caracteres. La sesion se valida con Supabase Auth." : "Modo local explicito para demo/desarrollo."}
+              required={authMode !== "local"}
+              help={authMode === "api"
+                ? "Acceso beta validado por la API de PraevIA."
+                : authMode === "supabase"
+                  ? "Minimo 8 caracteres. La sesion se valida con Supabase Auth."
+                  : "Modo local explicito para demo/desarrollo."}
               onChange={(event) => setPassword(event.target.value)}
             />
           ) : null}

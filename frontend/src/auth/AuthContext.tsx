@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { loadApiSession, loginApi, registerApi } from "./apiAuth";
 import { clearSession, loadSession, loginLocal, registerLocal } from "./localAuth";
 import {
   hydrateSupabaseSession,
@@ -14,7 +15,7 @@ import type { AuthSession, LoginInput, RegisterInput } from "./types";
 
 type AuthContextValue = {
   session: AuthSession | null;
-  authMode: "local" | "supabase";
+  authMode: "api" | "local" | "supabase";
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -27,8 +28,9 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function configuredAuthMode(): "local" | "supabase" {
+function configuredAuthMode(): "api" | "local" | "supabase" {
   const requested = (import.meta.env.VITE_AUTH_MODE as string | undefined)?.toLowerCase();
+  if (requested === "api") return "api";
   if (requested === "local") return "local";
   if (requested === "supabase") return "supabase";
   return isSupabaseConfigured ? "supabase" : "local";
@@ -36,7 +38,11 @@ function configuredAuthMode(): "local" | "supabase" {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const authMode = configuredAuthMode();
-  const [session, setSession] = useState<AuthSession | null>(() => authMode === "local" ? loadSession() : null);
+  const [session, setSession] = useState<AuthSession | null>(() => {
+    if (authMode === "api") return loadApiSession();
+    if (authMode === "local") return loadSession();
+    return null;
+  });
   const [isLoading, setIsLoading] = useState(authMode === "supabase");
   const [error, setError] = useState<string | null>(null);
 
@@ -83,7 +89,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setError(null);
       setIsLoading(true);
       try {
-        const nextSession = authMode === "supabase" ? await loginSupabase(input) : loginLocal(input);
+        const nextSession = authMode === "api"
+          ? await loginApi(input)
+          : authMode === "supabase"
+            ? await loginSupabase(input)
+            : loginLocal(input);
         setSession(nextSession);
         return nextSession;
       } catch (caught) {
@@ -97,7 +107,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setError(null);
       setIsLoading(true);
       try {
-        const nextSession = authMode === "supabase" ? await registerSupabase(input) : registerLocal(input);
+        const nextSession = authMode === "api"
+          ? await registerApi(input)
+          : authMode === "supabase"
+            ? await registerSupabase(input)
+            : registerLocal(input);
         setSession(nextSession);
         return nextSession;
       } catch (caught) {

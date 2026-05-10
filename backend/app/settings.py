@@ -14,6 +14,8 @@ class Settings:
     app_public_url: str
     api_public_url: str
     auth_mode: str
+    demo_login_email: str | None
+    demo_login_password: str | None
     persistence_mode: str
     database_url: str
     supabase_url: str | None
@@ -106,6 +108,8 @@ def load_settings() -> Settings:
         app_public_url=app_public_url,
         api_public_url=api_public_url,
         auth_mode=os.getenv("AUTH_MODE", "local" if app_env == "local" else "supabase"),
+        demo_login_email=os.getenv("DEMO_LOGIN_EMAIL") or None,
+        demo_login_password=os.getenv("DEMO_LOGIN_PASSWORD") or None,
         persistence_mode=os.getenv("PERSISTENCE_MODE", "memory" if app_env == "local" else "db"),
         database_url=os.getenv("DATABASE_URL", "postgresql://neuroimpact:neuroimpact@localhost:5432/neuroimpact"),
         supabase_url=os.getenv("SUPABASE_URL") or None,

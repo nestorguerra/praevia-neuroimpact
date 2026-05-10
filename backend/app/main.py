@@ -13,6 +13,7 @@ from starlette.responses import JSONResponse, Response
 
 from app.auth import require_auth
 from app.routes.admin import router as admin_router
+from app.routes.auth_local import router as auth_local_router
 from app.routes.benchmarks import router as benchmarks_router
 from app.routes.collaboration import router as collaboration_router
 from app.routes.comparisons import router as comparisons_router
@@ -182,6 +183,7 @@ def ready_dependencies(
 private_dependencies = [Depends(require_auth)]
 
 app.include_router(projects_router, prefix="/v1", dependencies=private_dependencies)
+app.include_router(auth_local_router, prefix="/v1")
 app.include_router(uploads_router, prefix="/v1", dependencies=private_dependencies)
 app.include_router(preprocessing_router, prefix="/v1", dependencies=private_dependencies)
 app.include_router(inference_router, prefix="/v1", dependencies=private_dependencies)

@@ -5,6 +5,7 @@ description = "FastAPI backend for PraevIA NeuroImpact Analyzer"
 requires-python = ">=3.11"
 dependencies = [
   "boto3>=1.35.0",
+  "email-validator>=2.2.0",
   "fastapi>=0.115.0",
   "google-auth>=2.35.0",
   "httpx>=0.28.0",
