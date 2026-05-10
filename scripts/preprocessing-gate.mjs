@@ -62,7 +62,7 @@ const ffprobeAvailable = spawnSync("ffprobe", ["-version"], { encoding: "utf8" }
 
 const checks = [
   ["backend_settings_preprocessing", has("backend/app/settings.py", /PREPROCESSING_WORKER_MODE/, /WHISPER_PROVIDER/, /WHISPER_MODEL/, /WHISPER_DEVICE/, /WHISPER_COMPUTE_TYPE/)],
-  ["storage_download_upload_methods", has("backend/app/services/storage.py", /def download_file/, /def upload_file/, /client\.download_file/, /client\.upload_file/)],
+  ["storage_download_upload_methods", has("backend/app/services/storage.py", /def download_file/, /def upload_file/, /client\.get_object/, /client\.put_object/, /ContentLength/)],
   ["backend_local_cpu_runner", has("backend/app/services/preprocessing_cpu.py", /run_local_cpu_preprocessing/, /ffprobe/, /ffmpeg/, /faster_whisper/, /storage_service\.download_file/, /storage_service\.upload_file/)],
   ["db_repository_uses_real_worker", has("backend/app/repositories/preprocessing_db.py", /PREPROCESSING|preprocessing_worker_mode|local_cpu/, /run_local_cpu_preprocessing/, /asset_derivatives/, /storage_objects/)],
   ["worker_transcribes_with_faster_whisper", has("worker/preprocessing/service.py", /def transcribe_audio/, /faster_whisper/, /transcript\.whisper\.json/) && !read("worker/preprocessing/service.py").includes("whisper_mock")],
