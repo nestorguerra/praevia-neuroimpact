@@ -61,7 +61,12 @@ class StorageService:
                 region_name=settings.s3_region,
                 aws_access_key_id=settings.s3_access_key_id,
                 aws_secret_access_key=settings.s3_secret_access_key,
-                config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
+                config=Config(
+                    signature_version="s3v4",
+                    s3={"addressing_style": "path"},
+                    request_checksum_calculation="when_required",
+                    response_checksum_validation="when_required",
+                ),
             )
         return self._client
 
@@ -158,7 +163,11 @@ class StorageService:
         destination.parent.mkdir(parents=True, exist_ok=True)
         client = self._client_or_raise()
         try:
-            client.download_file(bucket, key, str(destination))
+            response = client.get_object(Bucket=bucket, Key=key)
+            with destination.open("wb") as output:
+                for chunk in response["Body"].iter_chunks(chunk_size=1024 * 1024):
+                    if chunk:
+                        output.write(chunk)
         except Exception as exc:
             record_exception(exc, source="storage", metadata={"operation": "download_file", "bucket": bucket, "key": key})
             raise HTTPException(status_code=503, detail="No se pudo descargar el asset desde storage.") from exc
@@ -178,12 +187,18 @@ class StorageService:
             raise HTTPException(status_code=500, detail=f"Derivado no encontrado: {source.name}")
         self.ensure_bucket()
         client = self._client_or_raise()
-        extra_args = {"ContentType": content_type}
         clean_metadata = {item_key: str(item_value) for item_key, item_value in (metadata or {}).items() if item_value}
-        if clean_metadata:
-            extra_args["Metadata"] = clean_metadata
+        content_length = source.stat().st_size
         try:
-            client.upload_file(str(source), bucket, key, ExtraArgs=extra_args)
+            with source.open("rb") as body:
+                client.put_object(
+                    Bucket=bucket,
+                    Key=key,
+                    Body=body,
+                    ContentLength=content_length,
+                    ContentType=content_type,
+                    Metadata=clean_metadata,
+                )
         except Exception as exc:
             record_exception(exc, source="storage", metadata={"operation": "upload_file", "bucket": bucket, "key": key})
             raise HTTPException(status_code=503, detail="No se pudo subir el derivado a storage.") from exc

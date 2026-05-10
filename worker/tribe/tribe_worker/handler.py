@@ -48,7 +48,9 @@ def _assign_input_path(derivative: dict[str, Any], local_path: Path, text_output
         return "video_path", str(local_path)
     if label == "audio_16k_mono.wav":
         return "audio_path", str(local_path)
-    if derivative_type in {"transcript", "normalized_text"} or label.startswith("transcript") or label == "normalized_text.json":
+    if derivative_type == "transcript" or label.startswith("transcript"):
+        return "text_path", str(local_path)
+    if derivative_type == "normalized_text" or label == "normalized_text.json":
         return "text_path", str(_text_from_json(local_path, text_output))
     return None
 
