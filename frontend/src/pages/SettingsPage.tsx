@@ -28,6 +28,7 @@ import { loadRuntimeSettingsFromApi, saveRuntimeSettingsToApi } from "../setting
 import type { ComputeProvider, ReasoningEffort, RuntimeSettings, WorkerMode } from "../settings/types";
 
 const computeProviderLabels: Record<ComputeProvider, string> = {
+  google_cloud_run_gpu: "Google Cloud Run GPU",
   runpod_serverless: "RunPod Serverless GPU",
   modal_gpu: "Modal GPU worker",
   huggingface_endpoint: "Hugging Face Inference Endpoint",
@@ -115,6 +116,7 @@ export function SettingsPage() {
   const useApi = activeSession.provider === "supabase" && Boolean(activeSession.accessToken);
   const readiness = useMemo(() => getRuntimeReadiness(settings), [settings]);
   const envPreview = useMemo(() => buildEnvPreview(settings), [settings]);
+  const isGoogleCloudGpu = settings.tribe.computeProvider === "google_cloud_run_gpu";
 
   useEffect(() => {
     if (!useApi || !activeSession.accessToken) return;
@@ -176,8 +178,8 @@ export function SettingsPage() {
       <section className="settings-hero">
         <div>
           <span className="workspace-eyebrow">Ajustes · Computo y modelos</span>
-          <h2>TRIBE corre en GPU externa. Las claves viven aqui para la beta.</h2>
-          <p>Codex no pone una GPU permanente ni paga el compute. Para piloto real conectamos un worker GPU del proyecto, con token de Hugging Face para TRIBE y API key de OpenAI para interpretar y redactar informes.</p>
+          <h2>TRIBE corre en Google Cloud GPU. Las claves reales viven en Secret Manager.</h2>
+          <p>Para produccion usamos Cloud Run GPU, Cloud Tasks, Cloud Storage y Secret Manager. Este panel ayuda a revisar la configuracion; las claves privadas no deben quedarse en GitHub Pages.</p>
         </div>
         <div className="result-hero-actions">
           <Button variant="secondary" icon={<Trash2 size={15} />} onClick={removeSecrets}>Vaciar claves</Button>
@@ -234,7 +236,7 @@ export function SettingsPage() {
                   computeProvider: value,
                   workerMode: value === "colab_manual" ? "manual_colab" : value === "local_mock" ? "mock" : settings.tribe.workerMode,
                 })}
-                help="Recomendado para piloto: RunPod Serverless por coste bajo y despliegue Docker sencillo."
+                help="Recomendado para PraevIA: Google Cloud Run GPU con NVIDIA L4 en europe-west1."
               />
               <SelectField
                 label="Modo worker"
@@ -248,15 +250,16 @@ export function SettingsPage() {
                 type="password"
                 autoComplete="off"
                 value={settings.tribe.providerApiKey}
-                placeholder="RunPod / Modal / proveedor GPU"
-                help="En produccion esto debe ir en secret vault del backend, no en el navegador."
+                disabled={isGoogleCloudGpu}
+                placeholder={isGoogleCloudGpu ? "No aplica en Google Cloud" : "RunPod / Modal / proveedor GPU"}
+                help={isGoogleCloudGpu ? "Google usa IAM y service accounts; este campo queda vacio." : "En produccion esto debe ir en secret vault del backend, no en el navegador."}
                 onChange={(event) => patchTribe({ providerApiKey: event.target.value })}
               />
               <Input
                 label="Endpoint worker TRIBE"
                 value={settings.tribe.workerEndpointUrl}
-                placeholder="https://api.runpod.ai/v2/<endpoint-id>"
-                help="URL base del endpoint RunPod Serverless; la API anade /run al lanzar el job."
+                placeholder={isGoogleCloudGpu ? "https://praevia-tribe-worker-xxxxx-ew.a.run.app" : "https://api.runpod.ai/v2/<endpoint-id>"}
+                help={isGoogleCloudGpu ? "Lo tendremos cuando despleguemos el worker TRIBE en Cloud Run GPU." : "URL base del endpoint RunPod Serverless; la API anade /run al lanzar el job."}
                 onChange={(event) => patchTribe({ workerEndpointUrl: event.target.value })}
               />
               <Input
@@ -265,7 +268,7 @@ export function SettingsPage() {
                 autoComplete="off"
                 value={settings.tribe.hfToken}
                 placeholder="hf_..."
-                help="Necesario para descargar/cachear facebook/tribev2 en el worker."
+                help="En produccion debe estar en Google Secret Manager como HF_TOKEN."
                 onChange={(event) => patchTribe({ hfToken: event.target.value })}
               />
               <Input
@@ -309,13 +312,13 @@ export function SettingsPage() {
               <Input
                 label="Modelo interpretacion"
                 value={settings.llm.reportInterpreterModel}
-                help="Por defecto: GPT-5.5 Pro para lectura final del informe."
+                help="Por defecto: GPT-5.5 para lectura final del informe."
                 onChange={(event) => patchLlm({ reportInterpreterModel: event.target.value })}
               />
               <Input
                 label="Modelo redaccion"
                 value={settings.llm.reportWriterModel}
-                help="Por defecto: GPT-5.5 Thinking para redaccion razonada."
+                help="Por defecto: GPT-5.5 con reasoning alto para redaccion razonada."
                 onChange={(event) => patchLlm({ reportWriterModel: event.target.value })}
               />
               <SelectField
@@ -354,7 +357,7 @@ export function SettingsPage() {
                 <CheckCircle2 size={15} />
                 <div>
                   <strong>Piloto real</strong>
-                  <span>RunPod Serverless GPU. Empezar con T4/L4; subir a A10G/L40S si falta VRAM.</span>
+                  <span>Google Cloud Run GPU con NVIDIA L4, cola Cloud Tasks y secretos en Secret Manager.</span>
                 </div>
               </article>
               <article>

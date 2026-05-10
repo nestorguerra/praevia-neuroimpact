@@ -15,11 +15,11 @@ export function createDefaultRuntimeSettings(organizationId: string): RuntimeSet
     organizationId,
     updatedAt: nowIso(),
     tribe: {
-      computeProvider: "runpod_serverless",
-      workerMode: "mock",
+      computeProvider: "google_cloud_run_gpu",
+      workerMode: "remote_gpu",
       providerApiKey: "",
       workerEndpointUrl: "",
-      gpuProfile: "NVIDIA T4/L4 para piloto corto; A10G/L40S si subimos duracion o concurrencia.",
+      gpuProfile: "Google Cloud Run GPU · NVIDIA L4 · europe-west1 · max 1 instancia en beta.",
       hfToken: "",
       modelId: "facebook/tribev2",
       maxAssetDurationSeconds: 180,
@@ -29,8 +29,8 @@ export function createDefaultRuntimeSettings(organizationId: string): RuntimeSet
     llm: {
       provider: "openai",
       openaiApiKey: "",
-      reportInterpreterModel: "gpt-5.5-pro",
-      reportWriterModel: "gpt-5.5-thinking",
+      reportInterpreterModel: "gpt-5.5",
+      reportWriterModel: "gpt-5.5",
       writerReasoningEffort: "high",
       promptVersion: "report-master-v0.1",
     },
@@ -99,7 +99,9 @@ export function maskSecret(value: string) {
 
 export function getRuntimeReadiness(settings: RuntimeSettings): RuntimeReadiness {
   const remoteWorker = settings.tribe.workerMode === "remote_gpu";
-  const tribeComputeReady = remoteWorker && Boolean(settings.tribe.providerApiKey.trim()) && Boolean(settings.tribe.workerEndpointUrl.trim());
+  const providerNeedsApiKey = settings.tribe.computeProvider !== "google_cloud_run_gpu";
+  const providerAuthReady = !providerNeedsApiKey || Boolean(settings.tribe.providerApiKey.trim());
+  const tribeComputeReady = remoteWorker && providerAuthReady && Boolean(settings.tribe.workerEndpointUrl.trim());
   const huggingFaceReady = Boolean(settings.tribe.hfToken.trim()) && Boolean(settings.tribe.modelId.trim());
   const llmReady = Boolean(settings.llm.openaiApiKey.trim()) && Boolean(settings.llm.reportInterpreterModel.trim()) && Boolean(settings.llm.reportWriterModel.trim());
   return {
@@ -113,7 +115,9 @@ export function getRuntimeReadiness(settings: RuntimeSettings): RuntimeReadiness
 export function buildEnvPreview(settings: RuntimeSettings) {
   return [
     `GPU_PROVIDER=${settings.tribe.computeProvider}`,
-    "# API key del proveedor GPU: guardada solo en backend",
+    settings.tribe.computeProvider === "google_cloud_run_gpu"
+      ? "# Google Cloud usa IAM/Service Account; no necesita API key de proveedor GPU"
+      : "# API key del proveedor GPU: guardada solo en backend",
     `TRIBE_WORKER_MODE=${settings.tribe.workerMode}`,
     `TRIBE_WORKER_ENDPOINT_URL=${settings.tribe.workerEndpointUrl}`,
     "TRIBE_CALLBACK_URL=https://api.tu-dominio.com/v1/internal/tribe/callback",
@@ -123,7 +127,9 @@ export function buildEnvPreview(settings: RuntimeSettings) {
     "TRIBE_RUN_TIMEOUT_SECONDS=900",
     "TRIBE_RUN_POLL_SECONDS=5",
     "TRIBE_RUN_MAX_RETRIES=2",
-    "TRIBE_GPU_EUR_PER_SECOND=0.00025",
+    settings.tribe.computeProvider === "google_cloud_run_gpu"
+      ? "TRIBE_GPU_EUR_PER_SECOND=0.00035"
+      : "TRIBE_GPU_EUR_PER_SECOND=0.00025",
     `MONTHLY_GPU_CAP_SECONDS=${settings.tribe.monthlyGpuCapSeconds}`,
     `MONTHLY_COST_CAP_EUR=${settings.tribe.monthlyCostCapEur}`,
     "# Token Hugging Face: guardado solo en backend",

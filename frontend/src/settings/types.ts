@@ -1,4 +1,10 @@
-export type ComputeProvider = "runpod_serverless" | "modal_gpu" | "huggingface_endpoint" | "colab_manual" | "local_mock";
+export type ComputeProvider =
+  | "google_cloud_run_gpu"
+  | "runpod_serverless"
+  | "modal_gpu"
+  | "huggingface_endpoint"
+  | "colab_manual"
+  | "local_mock";
 
 export type WorkerMode = "mock" | "remote_gpu" | "manual_colab";
 
