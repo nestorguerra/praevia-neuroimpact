@@ -1,5 +1,5 @@
 import { FolderKanban, Info, UploadCloud } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { AppShell } from "../components/layout/AppShell";
 import { ProjectDetail } from "../components/projects/ProjectDetail";
@@ -55,6 +55,17 @@ function UploadPageContent({
   }, [experimentFromQuery, selectedBundle, state.projects, state.workspaces]);
 
   const [experimentId, setExperimentId] = useState(initialBundle?.experiment.id ?? state.experiments[0]?.id ?? "");
+  useEffect(() => {
+    if (experimentFromQuery && experimentId !== experimentFromQuery.id) {
+      setExperimentId(experimentFromQuery.id);
+      setSelectedProjectId(experimentFromQuery.projectId);
+      return;
+    }
+    if (!experimentId && state.experiments[0]) {
+      setExperimentId(state.experiments[0].id);
+    }
+  }, [experimentFromQuery, experimentId, setSelectedProjectId, state.experiments]);
+
   const activeBundle = useMemo(() => {
     const experiment = state.experiments.find((item) => item.id === experimentId);
     if (!experiment) return initialBundle;
