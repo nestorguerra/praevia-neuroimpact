@@ -331,7 +331,7 @@ class UploadsDbRepository:
                 select a.*, av.storage_bucket, av.storage_key, av.health
                 from public.assets a
                 left join public.asset_versions av on av.asset_id = a.id and av.version = 1
-                where a.experiment_id = %s
+                where a.experiment_id = %s and a.status <> 'deleted'
                 order by a.slot asc
                 """,
                 (experiment_id,),

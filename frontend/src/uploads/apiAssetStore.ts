@@ -95,7 +95,7 @@ async function putFileToSignedUrl(file: File, intent: { signed_url: string; head
 
 export async function loadAssetsFromApi(experimentId: string, accessToken: string): Promise<UploadAsset[]> {
   const rows = await apiFetch<ApiAsset[]>(`/v1/experiments/${experimentId}/assets`, accessToken);
-  return rows.map(assetFromApi);
+  return rows.filter((row) => row.status !== "deleted").map(assetFromApi);
 }
 
 export async function registerAssetInApi(

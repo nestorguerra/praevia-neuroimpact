@@ -1,0 +1,23 @@
+[
+  {
+    "origin": [
+      "https://nestorguerra.github.io",
+      "https://app.neuroimpact.praevia.ai",
+      "http://localhost:5173"
+    ],
+    "method": ["GET", "HEAD", "PUT", "POST"],
+    "responseHeader": [
+      "Content-Type",
+      "ETag",
+      "x-amz-meta-sha256",
+      "x-amz-meta-asset-id",
+      "x-amz-meta-upload-session-id",
+      "x-amz-meta-organization-id",
+      "x-goog-meta-sha256",
+      "x-goog-meta-asset-id",
+      "x-goog-meta-upload-session-id",
+      "x-goog-meta-organization-id"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]
